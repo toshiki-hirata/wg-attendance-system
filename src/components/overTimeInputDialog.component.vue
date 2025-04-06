@@ -18,14 +18,14 @@
         日付<br />
         <SelectComponent v-model="dateSelected" :options="dateOptions" />
       </div>
-      <InputComponent v-model="inputReviewer" label="レビュワー" />
+      <InputComponent v-model="inputReviewer" label="申請先" />
       <InputComponent
         v-model="inputOverTime"
-        label="残業申請時間"
+        label="時間"
         placeholder="1.0"
         :hour="true"
       />
-      <InputComponent v-model="inputReason" label="残業申請理由" :high="true" />
+      <InputComponent v-model="inputReason" label="理由" :high="true" />
       <div class="flex justify-between gap-4">
         <button
           class="h-[60px] w-full rounded-3xl bg-gray-300 hover:bg-gray-400 border border-gray-800 text-3xl text-gray-800"

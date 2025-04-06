@@ -6,12 +6,13 @@
     >
       残業申請
     </button>
-    <div class="w-full flex flex-row px-2 gap-2">
-      <SelectComponent v-model="dateSelected" :options="dateOptions" />
+    <div class="w-full flex flex-row gap-2 items-center">
+      <div>対象月</div>
       <SelectComponent
-        v-model="selected"
-        :options="options"
-        placeholder="please select item"
+        class="flex-grow"
+        v-model="dateSelected"
+        :options="dateOptions"
+        @change="handleSelectChange"
       />
     </div>
     <div class="flex flex-col gap-10">
@@ -21,24 +22,24 @@
             <th
               v-for="(column, columnIndex) in requestHeader"
               :key="columnIndex"
-              class="h-10 text-3xl text-gray-800 underline"
+              class="h-8 bg-purple-200 text-gray-800"
               :style="{ width: column.width }"
             >
               {{ column.label }}
             </th>
           </tr>
         </thead>
-        <tbody>
-          <tr v-for="(row, rowIndex) in requestData" :key="rowIndex">
+        <tbody v-if="tableData.length > 0">
+          <tr v-for="(row, rowIndex) in tableData" :key="rowIndex">
             <td
               v-for="(column, columnIndex) in requestHeader"
               :key="columnIndex"
-              class="h-20 bg-purple-200 px-2 border-b-2 border-b-gray-100"
+              class="h-20 bg-purple-100 px-2 border-b-2 border-b-gray-100"
             >
               <div v-if="column.field === 'button'" class="flex justify-center">
                 <button
                   class="h-8 bg-purple-500 rounded-[50px] px-3 border border-gray-100 hover:bg-purple-600"
-                  @click="onClickRemove(rowIndex)"
+                  @click="onClickRemove(row.applicationDate)"
                 >
                   取り消し
                 </button>
@@ -50,72 +51,65 @@
           </tr>
         </tbody>
       </table>
+      <div v-if="tableData.length === 0">申請はありません。</div>
     </div>
   </div>
   <OverTimeInputDialog v-model="isShowDialog" />
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useSideNavStore, SIDENAV_ITEM } from '/src/stores/sidenav.store';
 import { useLoadingStore } from '/src/stores/loading.store';
 import SelectComponent from '/src/components/select.component.vue';
 import OverTimeInputDialog from '/src/components/overTimeInputDialog.component.vue';
+import { useOverTimeStore } from '/src/stores/overTime.store';
 
 const sideNavStore = useSideNavStore();
 const loadingStore = useLoadingStore();
+const overtimeInfo = useOverTimeStore();
 
 const isShowDialog = ref(false);
 
-const dateSelected = ref('2025/01');
-const selected = ref('');
-const dateOptions = [
-  { value: '2025/01', text: '2025/01' },
-  { value: '2025/02', text: '2025/02' },
-  { value: '2025/03', text: '2025/03' },
-];
-const options = [
-  { value: 'option1', text: 'オプション 1' },
-  { value: 'option2', text: 'オプション 2' },
-  { value: 'option3', text: 'オプション 3' },
-];
+const dateSelected = ref('');
+const dateOptions = ref([]);
 
 const requestHeader: { label: string; field: string; width: string }[] = [
-  { label: '日付', field: 'date', width: '20vw' },
-  { label: 'レビュワー', field: 'reviewer', width: '20vw' },
+  { label: '日付', field: 'applicationDate', width: '20vw' },
   { label: '時間', field: 'overTime', width: '10vw' },
-  { label: '報告理由', field: 'reason', width: '35vw' },
+  { label: '理由', field: 'reason', width: '35vw' },
+  { label: '申請先', field: 'reviewer', width: '20vw' },
   { label: '', field: 'button', width: '15vw' },
 ];
 
-const requestData = ref([
-  {
-    date: '2024/12/31',
-    reviewer: 'taro.tanaka',
-    overTime: '1.0h',
-    reason: 'XXX調査',
-  },
-  {
-    date: '2025/01/01',
-    reviewer: 'taro.tanaka',
-    overTime: '3.0h',
-    reason: 'XXX実装',
-  },
-  {
-    date: '2025/02/01',
-    reviewer: 'taro.tanaka',
-    overTime: '2.0h',
-    reason: 'OOOテスト',
-  },
-]);
+const tableData = computed(() => {
+  return overtimeInfo.filteredOverTimeList || [];
+});
 
-const onClickRemove = (index: number) => {
-  requestData.value.splice(index, 1);
+const onClickRemove = (date: string) => {
+  overtimeInfo.removeOverTimeInfo(date);
+  overtimeInfo.filterOverTimeInfo(dateSelected.value);
+};
+
+const handleSelectChange = (value: string) => {
+  dateSelected.value = value;
+  overtimeInfo.filterOverTimeInfo(dateSelected.value);
 };
 
 onMounted(async () => {
   loadingStore.setLoading(true);
   sideNavStore.setCurrentItem(SIDENAV_ITEM.OVER_TIME);
+  overtimeInfo.fetchOverTimeInfo();
+
+  const pastThreeMonthsYYYYMM = getPastThreeMonthsYYYYMM();
+  for (const yyyymm of pastThreeMonthsYYYYMM) {
+    dateOptions.value.push({
+      value: yyyymm,
+      text: yyyymm,
+    });
+  }
+  dateSelected.value = dateOptions.value[0].value;
+  overtimeInfo.filterOverTimeInfo(dateSelected.value);
 
   await new Promise<void>((r) => {
     setTimeout(() => {
@@ -124,6 +118,20 @@ onMounted(async () => {
   });
   loadingStore.setLoading(false);
 });
+
+const getPastThreeMonthsYYYYMM = (): string[] => {
+  const now = new Date();
+  const result: string[] = [];
+
+  for (let i = 0; i < 3; i++) {
+    const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    result.push(`${year}/${month}`);
+  }
+
+  return result;
+};
 </script>
 
 <style scoped></style>
