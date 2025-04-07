@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-full gap-20">
+  <div class="flex flex-col h-full gap-20 tabular-nums">
     <div class="flex flex-col h-20 text-center gap-2">
       <span>{{ currentDate }}</span>
       <span class="text-[50px]">{{ currentTime }}</span>
@@ -55,7 +55,7 @@ const onClickStart = () => {
 const onClickBreak = () => {
   startButton.value = BUTTON_CONDITION.ENABLED;
   breakButton.value = BUTTON_CONDITION.NOT_ENABLED;
-  endButton.value = BUTTON_CONDITION.ENABLED;
+  endButton.value = BUTTON_CONDITION.DISABLED;
 };
 const onClickEnd = () => {
   startButton.value = BUTTON_CONDITION.ENABLED;
