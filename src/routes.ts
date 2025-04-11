@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import punchClockPage from '../src/pages/punchClockPage.vue';
 import OverTimePage from '../src/pages/overTimePage.vue';
-import { SIDENAV_ITEM } from '/src/stores/sidenav.store';
+import ApiSamplePage from '../src/pages/apiSamplePage.vue';
+import { SIDENAV_ITEM } from '../src/stores/sidenav.store';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -9,6 +10,7 @@ export const router = createRouter({
     { path: '/', component: punchClockPage },
     { path: '/punchClock', component: punchClockPage },
     { path: '/overTime', component: OverTimePage },
+    { path: '/apiSample', component: ApiSamplePage },
   ],
 });
 
