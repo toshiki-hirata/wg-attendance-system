@@ -1,7 +1,7 @@
 <template>
   <footer
     class="absolute flex flex-col bottom-0 inset-x-0 w-full pl-56 shadow-2xl items-center bg-gray-300 transition-all duration-200"
-    :class="[isShow ? 'h-2/3' : 'h-20']"
+    :class="[isShow ? 'h-1/3' : 'h-20']"
   >
     <div
       class="flex w-full justify-between px-4 pt-4 font-bold cursor-pointer"
@@ -30,7 +30,7 @@
             :key="rowIndex"
           >
             <td
-              v-for="(column, columnIndex) in header"
+              v-for="(_, columnIndex) in header"
               :key="columnIndex"
               class="h-10 px-2 border-2 border-gray-300 bg-gray-100"
             >
@@ -46,7 +46,7 @@
                 }}
               </div>
               <div v-else>
-                {{ data[columnIndex - 1][key] || '' }}
+                {{ attendanceStore.attendanceHistory[columnIndex - 1][key] || '' }}
               </div>
             </td>
           </tr>
@@ -60,6 +60,7 @@
 import { ref, onMounted } from 'vue'
 import ArrowIcon from '../assets/icons/arrow.icon.vue'
 import { useAttendanceStore } from '../stores/attendance.store'
+import { formatDate, formatMMDD } from '../utils/dateFormatter'
 
 const attendanceStore = useAttendanceStore()
 const isShow = ref(false)
@@ -75,19 +76,6 @@ export interface Attendance {
 const header = ref<{ label: string; field: string; width: string }[]>([
   { label: '', field: 'label', width: '150px' },
 ])
-const data = ref<Attendance[]>([])
-
-function formatDate(date: Date): string {
-  const jstDate = new Date(date.getTime() + (9 * 60 * 60 * 1000)) // JST補正
-  return jstDate.toISOString().split('T')[0]
-}
-
-
-function formatMMDD(date: Date): string {
-  const mm = String(date.getMonth() + 1).padStart(2, '0')
-  const dd = String(date.getDate()).padStart(2, '0')
-  return `${mm}/${dd}`
-}
 
 onMounted(async () => {
   await attendanceStore.fetchAttendanceHistory()
@@ -97,9 +85,6 @@ onMounted(async () => {
   attendances.forEach((attendance) => {
     attendanceMap.set(attendance.date, attendance)
   })
-
-  console.log('attendanceMap', attendanceMap)
-  console.log('attendances', attendances)
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -120,13 +105,15 @@ onMounted(async () => {
 
     // データ行追加
     const attendance = attendanceMap.get(yyyyMmDd)
-    data.value.push({
+    if(!attendance){
+      attendances.push({
       date: yyyyMmDd,
-      start: attendance?.start || '',
-      break: attendance?.break || '',
-      restart: attendance?.restart || '',
-      end: attendance?.end || '',
+      start: '',
+      break: '',
+      restart: '',
+      end: '',
     })
+    }
   }
 })
 </script>

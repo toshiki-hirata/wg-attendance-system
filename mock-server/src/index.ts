@@ -31,23 +31,23 @@ app.get('/attendances/history', (c) => {
   return c.json([
     {
       date: dayBeforeYesterday.toISOString().split('T')[0],
-      startTime: '08:30',
-      endTime: '17:30',
+      startTime: '08:30:00',
+      endTime: '17:30:00',
       breaks: [
         {
-          start: '12:00',
-          end: '13:00'
+          start: '12:00:00',
+          end: '13:00:00'
         }
       ]
     },
     {
       date: yesterday.toISOString().split('T')[0],
-      startTime: '09:00',
-      endTime: '18:00',
+      startTime: '09:00:00',
+      endTime: '18:00:00',
       breaks: [
         {
-          start: '12:00',
-          end: '13:00'
+          start: '12:00:00',
+          end: '13:00:00'
         }
       ]
     },])

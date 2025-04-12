@@ -8,7 +8,7 @@ export interface AttendanceState {
     attendanceHistory: Attendance[];
   }
   
-  export const useAttendanceStore = defineStore('attendance.loading', {
+  export const useAttendanceStore = defineStore('attendance.attendance', {
     state: (): AttendanceState => ({
         attendanceHistory: [],
     }),
@@ -32,7 +32,29 @@ export interface AttendanceState {
               } catch (error) {
                 console.error('GET request failed:', error);
               }
-        }
+        },
+        addAttendanceHistory(attendance: Attendance) {
+            this.attendanceHistory.push(attendance); 
+        },
+        async postAttendance(attendance: Attendance) {
+            try {
+                const response = await axiosInstance.post('/attendances', {
+                    date: attendance.date,
+                    startTime: attendance.start,
+                    endTime: attendance.end,
+                    breaks: [
+                        {
+                            start: attendance.break,
+                            end: attendance.restart,
+                        },
+                    ],
+                });
+                return response.data;
+            } catch (error) {
+                console.error('POST request failed:', error);
+                throw error;
+            }
+        },
     },
   });
   
