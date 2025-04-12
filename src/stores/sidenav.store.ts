@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 
 export enum SIDENAV_ITEM {
-  PUNCK_CLOCH = '打刻',
+  PUNCH_CLOCK = '打刻',
   OVER_TIME = '残業確認',
 }
 
