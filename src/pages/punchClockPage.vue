@@ -30,11 +30,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useSideNavStore, SIDENAV_ITEM } from '/src/stores/sidenav.store';
-import { useLoadingStore } from '/src/stores/loading.store';
+import { useSideNavStore, SIDENAV_ITEM } from '../stores/sidenav.store';
+import { useLoadingStore } from '../stores/loading.store';
 import PrimaryButton, {
   BUTTON_CONDITION,
-} from '/src/components/primaryButton.component.vue';
+} from '../components/primaryButton.component.vue';
 
 const sideNavStore = useSideNavStore();
 const loadingStore = useLoadingStore();

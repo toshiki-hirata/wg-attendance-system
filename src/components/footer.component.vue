@@ -4,7 +4,7 @@
     :class="[isShow ? 'h-2/3' : 'h-20']"
   >
     <div
-      class="flex w-full justify-between px-4 pt-4 font-bold"
+      class="flex w-full justify-between px-4 pt-4 font-bold cursor-pointer"
       @click="isShow = !isShow"
     >
       打刻時間
@@ -26,18 +26,28 @@
         </thead>
         <tbody>
           <tr
-            v-for="(row, rowIndex) in ['start', 'break', 'restart', 'end']"
+            v-for="(key, rowIndex) in ['start', 'break', 'restart', 'end'] as Array<keyof Attendance>"
             :key="rowIndex"
           >
             <td
               v-for="(column, columnIndex) in header"
               :key="columnIndex"
-              class="h-10 bg-gray-100 px-2 border-2 border-gray-300"
+              class="h-10 px-2 border-2 border-gray-300 bg-gray-100"
             >
-              <div v-if="rowIndex === 0">{{ data[columnIndex].start }}</div>
-              <div v-if="rowIndex === 1">{{ data[columnIndex].break }}</div>
-              <div v-if="rowIndex === 2">{{ data[columnIndex].restart }}</div>
-              <div v-if="rowIndex === 3">{{ data[columnIndex].end }}</div>
+              <div v-if="columnIndex === 0">
+                {{
+                  rowIndex === 0
+                    ? '勤務開始'
+                    : rowIndex === 1
+                    ? '休憩開始'
+                    : rowIndex === 2
+                    ? '勤務再開'
+                    : '勤務終了'
+                }}
+              </div>
+              <div v-else>
+                {{ data[columnIndex - 1][key] || '' }}
+              </div>
             </td>
           </tr>
         </tbody>
@@ -47,82 +57,76 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import ArrowIcon from '/src/assets/icons/arrow.icon.vue';
+import { ref, onMounted } from 'vue'
+import ArrowIcon from '../assets/icons/arrow.icon.vue'
+import { useAttendanceStore } from '../stores/attendance.store'
 
-const isShow = ref(false);
+const attendanceStore = useAttendanceStore()
+const isShow = ref(false)
+
+export interface Attendance {
+  date: string
+  start: string
+  break: string
+  restart: string
+  end: string
+}
 
 const header = ref<{ label: string; field: string; width: string }[]>([
-  { label: '', field: 'period', width: '200px' },
-]);
+  { label: '', field: 'label', width: '150px' },
+])
+const data = ref<Attendance[]>([])
 
-interface RowItem {
-  rowLabel: string;
-  start: string;
-  break: string;
-  restart: string;
-  end: string;
+function formatDate(date: Date): string {
+  const jstDate = new Date(date.getTime() + (9 * 60 * 60 * 1000)) // JST補正
+  return jstDate.toISOString().split('T')[0]
 }
-const data = ref<RowItem[]>([
-  {
-    rowLabel: 'period',
-    start: '勤務開始時刻',
-    break: '休憩開始時刻',
-    restart: '勤務再開時刻',
-    end: '勤務終了時刻',
-  },
-]);
 
-onMounted(() => {
-  const today = new Date();
-  const daysOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
 
-  for (let i = 0; i < 7; i++) {
-    const currentDate = new Date(today);
-    currentDate.setDate(today.getDate() + i);
+function formatMMDD(date: Date): string {
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  const dd = String(date.getDate()).padStart(2, '0')
+  return `${mm}/${dd}`
+}
 
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = currentDate.getDate().toString().padStart(2, '0');
-    const weekday = daysOfWeek[currentDate.getDay()];
+onMounted(async () => {
+  await attendanceStore.fetchAttendanceHistory()
+  const attendances = attendanceStore.attendanceHistory
 
+  const attendanceMap = new Map<string, Attendance>()
+  attendances.forEach((attendance) => {
+    attendanceMap.set(attendance.date, attendance)
+  })
+
+  console.log('attendanceMap', attendanceMap)
+  console.log('attendances', attendances)
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  // 一昨日から7日分のループ
+  for (let i = -2; i < 5; i++) {
+    const targetDate = new Date(today)
+    targetDate.setDate(today.getDate() + i)
+    const yyyyMmDd = formatDate(targetDate)
+    const mmDd = formatMMDD(targetDate)
+
+    // カラム（日付見出し）追加
     header.value.push({
-      label: `${month}/${day}`,
-      field: `${month}/${day}`,
-      width: `100px`,
-    });
+      label: mmDd,
+      field: yyyyMmDd,
+      width: '150px',
+    })
 
-    data.value[i + 1] = {
-      period: '',
-      start: '',
-      break: '',
-      restart: '',
-      end: '',
-    };
-
-    // mock
-    data.value[2] = {
-      period: '04/01',
-      start: '09:00',
-      break: '12:00',
-      restart: '13:00',
-      end: '18:00',
-    };
-    data.value[3] = {
-      period: '04/02',
-      start: '09:05',
-      break: '12:05',
-      restart: '13:05',
-      end: '18:05',
-    };
-    data.value[4] = {
-      period: '04/03',
-      start: '09:00',
-      break: '12:00',
-      restart: '',
-      end: '',
-    };
+    // データ行追加
+    const attendance = attendanceMap.get(yyyyMmDd)
+    data.value.push({
+      date: yyyyMmDd,
+      start: attendance?.start || '',
+      break: attendance?.break || '',
+      restart: attendance?.restart || '',
+      end: attendance?.end || '',
+    })
   }
-});
+})
 </script>
-
-<style></style>
