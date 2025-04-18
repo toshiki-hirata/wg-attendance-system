@@ -22,6 +22,11 @@ export default tseslint.config(
         parser: tseslint.parser,
       },
     },
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+      'vue/require-explicit-emits': 'off',
+      'vue/multi-word-component-names': 'off',
+    },
   },
   prettierRecommended
 )
