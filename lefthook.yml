@@ -1,6 +1,6 @@
 pre-push:
   jobs:
-    run: npm run lint
+    run: npx eslint {push_files}
 # EXAMPLE USAGE:
 #
 #   Refer for explanation to following link:
