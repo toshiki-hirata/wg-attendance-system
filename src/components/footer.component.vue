@@ -26,7 +26,7 @@
         </thead>
         <tbody>
           <tr
-            v-for="(key, rowIndex) in ['start', 'break', 'restart', 'end'] as Array<keyof Attendance>"
+            v-for="(key, rowIndex) in (['start', 'break', 'restart', 'end'] as Array<keyof Omit<Attendance, 'date'>>)"
             :key="rowIndex"
           >
             <td
@@ -34,20 +34,12 @@
               :key="columnIndex"
               class="h-10 px-2 border-2 border-gray-300 bg-gray-100"
             >
-              <div v-if="columnIndex === 0">
-                {{
-                  rowIndex === 0
-                    ? '勤務開始'
-                    : rowIndex === 1
-                    ? '休憩開始'
-                    : rowIndex === 2
-                    ? '勤務再開'
-                    : '勤務終了'
-                }}
-              </div>
-              <div v-else>
+              <template v-if="columnIndex === 0">
+                {{ attendanceLabels[key] }}
+              </template>
+              <template v-else>
                 {{ attendanceStore.attendanceHistory[columnIndex - 1][key] || '' }}
-              </div>
+              </template>
             </td>
           </tr>
         </tbody>
@@ -73,47 +65,104 @@ export interface Attendance {
   end: string
 }
 
+const attendanceLabels: Record<keyof Omit<Attendance, 'date'>, string> = {
+  start: '勤務開始',
+  break: '休憩開始',
+  restart: '勤務再開',
+  end: '勤務終了'
+}
+
+// ...existing code...
 const header = ref<{ label: string; field: string; width: string }[]>([
   { label: '', field: 'label', width: '150px' },
 ])
 
 onMounted(async () => {
   await attendanceStore.fetchAttendanceHistory()
-  const attendances = attendanceStore.attendanceHistory
 
-  const attendanceMap = new Map<string, Attendance>()
-  attendances.forEach((attendance) => {
-    attendanceMap.set(attendance.date, attendance)
-  })
+  // 日付範囲の生成
+  const dateRange = generateDateRangeFromToday(-2, 5)
 
+  // ヘッダー情報を更新
+  header.value = [
+    { label: '', field: 'label', width: '150px' },
+    ...generateHeaderColumns(dateRange)
+  ]
+
+  // 欠損データを補完
+  const updatedAttendances = fillMissingAttendances(dateRange, attendanceStore.attendanceHistory)
+
+  // ストアを更新
+  attendanceStore.attendanceHistory = updatedAttendances
+})
+
+/**
+ * 今日の日付を基準に指定された範囲の日付配列を生成
+ */
+function generateDateRangeFromToday(startOffset: number, count: number) {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  // 一昨日から7日分のループ
-  for (let i = -2; i < 5; i++) {
-    const targetDate = new Date(today)
-    targetDate.setDate(today.getDate() + i)
-    const yyyyMmDd = formatDate(targetDate)
-    const mmDd = formatMMDD(targetDate)
+  return generateDateRange(today, startOffset, count)
+}
 
-    // カラム（日付見出し）追加
-    header.value.push({
-      label: mmDd,
-      field: yyyyMmDd,
-      width: '150px',
+/**
+ * 指定された基準日から特定の範囲の日付配列を生成
+ */
+function generateDateRange(baseDate: Date, startOffset: number, count: number) {
+  const result = []
+  for (let i = startOffset; i < startOffset + count; i++) {
+    const targetDate = new Date(baseDate)
+    targetDate.setDate(baseDate.getDate() + i)
+    result.push({
+      date: targetDate,
+      formattedDate: formatDate(targetDate),
+      formattedShortDate: formatMMDD(targetDate)
     })
+  }
+  return result
+}
 
-    // データ行追加
-    const attendance = attendanceMap.get(yyyyMmDd)
-    if(!attendance){
-      attendances.push({
-      date: yyyyMmDd,
-      start: '',
-      break: '',
-      restart: '',
-      end: '',
-    })
+/**
+ * 日付範囲からヘッダーカラムを生成
+ */
+function generateHeaderColumns(dateRange: { date: Date, formattedDate: string, formattedShortDate: string }[]) {
+  return dateRange.map(({ formattedDate, formattedShortDate }) => ({
+    label: formattedShortDate,
+    field: formattedDate,
+    width: '150px',
+  }))
+}
+
+/**
+ * 欠損している日付のデータを補完した新しい配列を返す
+ */
+function fillMissingAttendances(
+  dateRange: { date: Date, formattedDate: string, formattedShortDate: string }[],
+  existingAttendances: Attendance[]
+) {
+  // 関数内でマップを生成
+  const attendanceMap = new Map<string, Attendance>()
+  existingAttendances.forEach((attendance) => {
+    attendanceMap.set(attendance.date, attendance)
+  })
+
+  // 既存の配列をコピーして変更せず、新しい配列を作成
+  const result = [...existingAttendances]
+
+  for (const { formattedDate } of dateRange) {
+    if (!attendanceMap.get(formattedDate)) {
+      // 新しい要素を作成して追加
+      result.push({
+        date: formattedDate,
+        start: '',
+        break: '',
+        restart: '',
+        end: '',
+      })
     }
   }
-})
+
+  return result
+}
 </script>
