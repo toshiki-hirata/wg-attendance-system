@@ -10,7 +10,7 @@
     <div
       class="relative flex flex-col bg-white p-6 rounded-md shadow-lg h-2/3 w-full max-w-[500px] justify-between"
     >
-      <button @click="closeDialog" class="absolute top-4 right-4 text-gray-800">
+      <button class="absolute top-4 right-4 text-gray-800" @click="closeDialog">
         &times;
       </button>
       残業申請をしてください。

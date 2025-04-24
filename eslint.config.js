@@ -1,9 +1,9 @@
 // @ts-check
-import tseslint from 'typescript-eslint'
-import eslint from '@eslint/js'
-import pluginVue from 'eslint-plugin-vue'
-import prettierRecommended from 'eslint-plugin-prettier/recommended'
-import globals from 'globals'
+import tseslint from 'typescript-eslint';
+import eslint from '@eslint/js';
+import pluginVue from 'eslint-plugin-vue';
+import prettierRecommended from 'eslint-plugin-prettier/recommended';
+import globals from 'globals';
 
 export default tseslint.config(
   { ignores: ['*.d.ts', '**/coverage', '**/dist'] },
@@ -29,4 +29,4 @@ export default tseslint.config(
     },
   },
   prettierRecommended
-)
+);

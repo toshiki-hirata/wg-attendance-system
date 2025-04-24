@@ -26,7 +26,12 @@
         </thead>
         <tbody>
           <tr
-            v-for="(key, rowIndex) in (['start', 'break', 'restart', 'end'] as Array<keyof Omit<Attendance, 'date'>>)"
+            v-for="(key, rowIndex) in [
+              'start',
+              'break',
+              'restart',
+              'end',
+            ] as Array<keyof Omit<Attendance, 'date'>>"
             :key="rowIndex"
           >
             <td
@@ -38,7 +43,9 @@
                 {{ attendanceLabels[key] }}
               </template>
               <template v-else>
-                {{ attendanceStore.attendanceHistory[columnIndex - 1][key] || '' }}
+                {{
+                  attendanceStore.attendanceHistory[columnIndex - 1][key] || ''
+                }}
               </template>
             </td>
           </tr>
@@ -49,106 +56,115 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import ArrowIcon from '../assets/icons/arrow.icon.vue'
-import { useAttendanceStore } from '../stores/attendance.store'
-import { formatDate, formatMMDD } from '../utils/dateFormatter'
+import { ref, onMounted } from 'vue';
+import ArrowIcon from '../assets/icons/arrow.icon.vue';
+import { useAttendanceStore } from '../stores/attendance.store';
+import { formatDate, formatMMDD } from '../utils/dateFormatter';
 
-const attendanceStore = useAttendanceStore()
-const isShow = ref(false)
+const attendanceStore = useAttendanceStore();
+const isShow = ref(false);
 
 export interface Attendance {
-  date: string
-  start: string
-  break: string
-  restart: string
-  end: string
+  date: string;
+  start: string;
+  break: string;
+  restart: string;
+  end: string;
 }
 
 const attendanceLabels: Record<keyof Omit<Attendance, 'date'>, string> = {
   start: '勤務開始',
   break: '休憩開始',
   restart: '勤務再開',
-  end: '勤務終了'
-}
+  end: '勤務終了',
+};
 
 // ...existing code...
 const header = ref<{ label: string; field: string; width: string }[]>([
   { label: '', field: 'label', width: '150px' },
-])
+]);
 
 onMounted(async () => {
-  await attendanceStore.fetchAttendanceHistory()
+  await attendanceStore.fetchAttendanceHistory();
 
   // 日付範囲の生成
-  const dateRange = generateDateRangeFromToday(-2, 5)
+  const dateRange = generateDateRangeFromToday(-2, 5);
 
   // ヘッダー情報を更新
   header.value = [
     { label: '', field: 'label', width: '150px' },
-    ...generateHeaderColumns(dateRange)
-  ]
+    ...generateHeaderColumns(dateRange),
+  ];
 
   // 欠損データを補完
-  const updatedAttendances = fillMissingAttendances(dateRange, attendanceStore.attendanceHistory)
+  const updatedAttendances = fillMissingAttendances(
+    dateRange,
+    attendanceStore.attendanceHistory
+  );
 
   // ストアを更新
-  attendanceStore.attendanceHistory = updatedAttendances
-})
+  attendanceStore.attendanceHistory = updatedAttendances;
+});
 
 /**
  * 今日の日付を基準に指定された範囲の日付配列を生成
  */
 function generateDateRangeFromToday(startOffset: number, count: number) {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-  return generateDateRange(today, startOffset, count)
+  return generateDateRange(today, startOffset, count);
 }
 
 /**
  * 指定された基準日から特定の範囲の日付配列を生成
  */
 function generateDateRange(baseDate: Date, startOffset: number, count: number) {
-  const result = []
+  const result = [];
   for (let i = startOffset; i < startOffset + count; i++) {
-    const targetDate = new Date(baseDate)
-    targetDate.setDate(baseDate.getDate() + i)
+    const targetDate = new Date(baseDate);
+    targetDate.setDate(baseDate.getDate() + i);
     result.push({
       date: targetDate,
       formattedDate: formatDate(targetDate),
-      formattedShortDate: formatMMDD(targetDate)
-    })
+      formattedShortDate: formatMMDD(targetDate),
+    });
   }
-  return result
+  return result;
 }
 
 /**
  * 日付範囲からヘッダーカラムを生成
  */
-function generateHeaderColumns(dateRange: { date: Date, formattedDate: string, formattedShortDate: string }[]) {
+function generateHeaderColumns(
+  dateRange: { date: Date; formattedDate: string; formattedShortDate: string }[]
+) {
   return dateRange.map(({ formattedDate, formattedShortDate }) => ({
     label: formattedShortDate,
     field: formattedDate,
     width: '150px',
-  }))
+  }));
 }
 
 /**
  * 欠損している日付のデータを補完した新しい配列を返す
  */
 function fillMissingAttendances(
-  dateRange: { date: Date, formattedDate: string, formattedShortDate: string }[],
+  dateRange: {
+    date: Date;
+    formattedDate: string;
+    formattedShortDate: string;
+  }[],
   existingAttendances: Attendance[]
 ) {
   // 関数内でマップを生成
-  const attendanceMap = new Map<string, Attendance>()
+  const attendanceMap = new Map<string, Attendance>();
   existingAttendances.forEach((attendance) => {
-    attendanceMap.set(attendance.date, attendance)
-  })
+    attendanceMap.set(attendance.date, attendance);
+  });
 
   // 既存の配列をコピーして変更せず、新しい配列を作成
-  const result = [...existingAttendances]
+  const result = [...existingAttendances];
 
   for (const { formattedDate } of dateRange) {
     if (!attendanceMap.get(formattedDate)) {
@@ -159,10 +175,10 @@ function fillMissingAttendances(
         break: '',
         restart: '',
         end: '',
-      })
+      });
     }
   }
 
-  return result
+  return result;
 }
 </script>
