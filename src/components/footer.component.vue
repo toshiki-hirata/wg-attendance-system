@@ -1,10 +1,10 @@
 <template>
   <footer
     class="absolute flex flex-col bottom-0 inset-x-0 w-full pl-56 shadow-2xl items-center bg-gray-300 transition-all duration-200"
-    :class="[isShow ? 'h-2/3' : 'h-20']"
+    :class="[isShow ? 'h-1/3' : 'h-20']"
   >
     <div
-      class="flex w-full justify-between px-4 pt-4 font-bold"
+      class="flex w-full justify-between px-4 pt-4 font-bold cursor-pointer"
       @click="isShow = !isShow"
     >
       打刻時間
@@ -26,18 +26,20 @@
         </thead>
         <tbody>
           <tr
-            v-for="(row, rowIndex) in ['start', 'break', 'restart', 'end']"
+            v-for="(key, rowIndex) in (['start', 'break', 'restart', 'end'] as Array<keyof Omit<Attendance, 'date'>>)"
             :key="rowIndex"
           >
             <td
-              v-for="(column, columnIndex) in header"
+              v-for="(_, columnIndex) in header"
               :key="columnIndex"
-              class="h-10 bg-gray-100 px-2 border-2 border-gray-300"
+              class="h-10 px-2 border-2 border-gray-300 bg-gray-100"
             >
-              <div v-if="rowIndex === 0">{{ data[columnIndex].start }}</div>
-              <div v-if="rowIndex === 1">{{ data[columnIndex].break }}</div>
-              <div v-if="rowIndex === 2">{{ data[columnIndex].restart }}</div>
-              <div v-if="rowIndex === 3">{{ data[columnIndex].end }}</div>
+              <template v-if="columnIndex === 0">
+                {{ attendanceLabels[key] }}
+              </template>
+              <template v-else>
+                {{ attendanceStore.attendanceHistory[columnIndex - 1][key] || '' }}
+              </template>
             </td>
           </tr>
         </tbody>
@@ -47,82 +49,120 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import ArrowIcon from '/src/assets/icons/arrow.icon.vue';
+import { ref, onMounted } from 'vue'
+import ArrowIcon from '../assets/icons/arrow.icon.vue'
+import { useAttendanceStore } from '../stores/attendance.store'
+import { formatDate, formatMMDD } from '../utils/dateFormatter'
 
-const isShow = ref(false);
+const attendanceStore = useAttendanceStore()
+const isShow = ref(false)
 
-const header = ref<{ label: string; field: string; width: string }[]>([
-  { label: '', field: 'period', width: '200px' },
-]);
-
-interface RowItem {
-  rowLabel: string;
-  start: string;
-  break: string;
-  restart: string;
-  end: string;
+export interface Attendance {
+  date: string
+  start: string
+  break: string
+  restart: string
+  end: string
 }
-const data = ref<RowItem[]>([
-  {
-    rowLabel: 'period',
-    start: '勤務開始時刻',
-    break: '休憩開始時刻',
-    restart: '勤務再開時刻',
-    end: '勤務終了時刻',
-  },
-]);
 
-onMounted(() => {
-  const today = new Date();
-  const daysOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
+const attendanceLabels: Record<keyof Omit<Attendance, 'date'>, string> = {
+  start: '勤務開始',
+  break: '休憩開始',
+  restart: '勤務再開',
+  end: '勤務終了'
+}
 
-  for (let i = 0; i < 7; i++) {
-    const currentDate = new Date(today);
-    currentDate.setDate(today.getDate() + i);
+// ...existing code...
+const header = ref<{ label: string; field: string; width: string }[]>([
+  { label: '', field: 'label', width: '150px' },
+])
 
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = currentDate.getDate().toString().padStart(2, '0');
-    const weekday = daysOfWeek[currentDate.getDay()];
+onMounted(async () => {
+  await attendanceStore.fetchAttendanceHistory()
 
-    header.value.push({
-      label: `${month}/${day}`,
-      field: `${month}/${day}`,
-      width: `100px`,
-    });
+  // 日付範囲の生成
+  const dateRange = generateDateRangeFromToday(-2, 5)
 
-    data.value[i + 1] = {
-      period: '',
-      start: '',
-      break: '',
-      restart: '',
-      end: '',
-    };
+  // ヘッダー情報を更新
+  header.value = [
+    { label: '', field: 'label', width: '150px' },
+    ...generateHeaderColumns(dateRange)
+  ]
 
-    // mock
-    data.value[2] = {
-      period: '04/01',
-      start: '09:00',
-      break: '12:00',
-      restart: '13:00',
-      end: '18:00',
-    };
-    data.value[3] = {
-      period: '04/02',
-      start: '09:05',
-      break: '12:05',
-      restart: '13:05',
-      end: '18:05',
-    };
-    data.value[4] = {
-      period: '04/03',
-      start: '09:00',
-      break: '12:00',
-      restart: '',
-      end: '',
-    };
+  // 欠損データを補完
+  const updatedAttendances = fillMissingAttendances(dateRange, attendanceStore.attendanceHistory)
+
+  // ストアを更新
+  attendanceStore.attendanceHistory = updatedAttendances
+})
+
+/**
+ * 今日の日付を基準に指定された範囲の日付配列を生成
+ */
+function generateDateRangeFromToday(startOffset: number, count: number) {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  return generateDateRange(today, startOffset, count)
+}
+
+/**
+ * 指定された基準日から特定の範囲の日付配列を生成
+ */
+function generateDateRange(baseDate: Date, startOffset: number, count: number) {
+  const result = []
+  for (let i = startOffset; i < startOffset + count; i++) {
+    const targetDate = new Date(baseDate)
+    targetDate.setDate(baseDate.getDate() + i)
+    result.push({
+      date: targetDate,
+      formattedDate: formatDate(targetDate),
+      formattedShortDate: formatMMDD(targetDate)
+    })
   }
-});
-</script>
+  return result
+}
 
-<style></style>
+/**
+ * 日付範囲からヘッダーカラムを生成
+ */
+function generateHeaderColumns(dateRange: { date: Date, formattedDate: string, formattedShortDate: string }[]) {
+  return dateRange.map(({ formattedDate, formattedShortDate }) => ({
+    label: formattedShortDate,
+    field: formattedDate,
+    width: '150px',
+  }))
+}
+
+/**
+ * 欠損している日付のデータを補完した新しい配列を返す
+ */
+function fillMissingAttendances(
+  dateRange: { date: Date, formattedDate: string, formattedShortDate: string }[],
+  existingAttendances: Attendance[]
+) {
+  // 関数内でマップを生成
+  const attendanceMap = new Map<string, Attendance>()
+  existingAttendances.forEach((attendance) => {
+    attendanceMap.set(attendance.date, attendance)
+  })
+
+  // 既存の配列をコピーして変更せず、新しい配列を作成
+  const result = [...existingAttendances]
+
+  for (const { formattedDate } of dateRange) {
+    if (!attendanceMap.get(formattedDate)) {
+      // 新しい要素を作成して追加
+      result.push({
+        date: formattedDate,
+        start: '',
+        break: '',
+        restart: '',
+        end: '',
+      })
+    }
+  }
+
+  return result
+}
+</script>
