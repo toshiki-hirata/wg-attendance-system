@@ -1,6 +1,7 @@
 pre-push:
   jobs:
-    run: npx eslint {push_files}
+    - run: npx eslint {push_files}
+      glob: '*.{js,vue,ts}'
 # EXAMPLE USAGE:
 #
 #   Refer for explanation to following link:
