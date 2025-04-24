@@ -41,7 +41,7 @@ import { formatDate } from '../utils/dateFormatter';
 
 const sideNavStore = useSideNavStore();
 const loadingStore = useLoadingStore();
-const attendanceStore = useAttendanceStore()
+const attendanceStore = useAttendanceStore();
 
 const currentDate = ref('');
 const currentTime = ref('');
@@ -52,9 +52,9 @@ const breakButton = ref(BUTTON_CONDITION.DISABLED);
 const endButton = ref(BUTTON_CONDITION.DISABLED);
 
 const onClickStart = () => {
-  if(breakButton.value == BUTTON_CONDITION.NOT_ENABLED) {
+  if (breakButton.value == BUTTON_CONDITION.NOT_ENABLED) {
     updateAttendance('restart', currentTime.value);
-  }else {
+  } else {
     updateAttendance('start', currentTime.value);
   }
   startButton.value = BUTTON_CONDITION.NOT_ENABLED;
@@ -72,8 +72,10 @@ const onClickEnd = async () => {
   breakButton.value = BUTTON_CONDITION.DISABLED;
   endButton.value = BUTTON_CONDITION.DISABLED;
   updateAttendance('end', currentTime.value);
-  const todayAttendance = attendanceStore.attendanceHistory.find(p=> p.date === formatDate(new Date()));
-  if(todayAttendance) {
+  const todayAttendance = attendanceStore.attendanceHistory.find(
+    (p) => p.date === formatDate(new Date())
+  );
+  if (todayAttendance) {
     const response = await attendanceStore.postAttendance(todayAttendance);
     console.log('response', response);
   }
@@ -99,7 +101,9 @@ const setCurrent = () => {
 
 onMounted(async () => {
   setCurrent(); // 初回実行
-  setInterval(() => {setCurrent()}, 1000); // 毎秒更新
+  setInterval(() => {
+    setCurrent();
+  }, 1000); // 毎秒更新
   loadingStore.setLoading(true);
   await new Promise<void>((r) => {
     setTimeout(() => {
@@ -112,18 +116,18 @@ onMounted(async () => {
 });
 
 function updateAttendance(key: keyof Attendance, time: string) {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const yyyyMmDd = formatDate(today)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const yyyyMmDd = formatDate(today);
 
   // すでに存在するデータを取得
   const attendance = attendanceStore.attendanceHistory.find(
     (att) => att.date === yyyyMmDd
-  )
+  );
 
   if (attendance) {
     // すでに存在していればその値を更新
-    attendance[key] = time
+    attendance[key] = time;
   } else {
     // 存在しない場合、新しく追加
     const newAttendance: Attendance = {
@@ -132,12 +136,11 @@ function updateAttendance(key: keyof Attendance, time: string) {
       break: '',
       restart: '',
       end: '',
-    }
-    newAttendance[key] = time
+    };
+    newAttendance[key] = time;
     attendanceStore.addAttendanceHistory(newAttendance);
   }
 }
-
 </script>
 
 <style scoped></style>
