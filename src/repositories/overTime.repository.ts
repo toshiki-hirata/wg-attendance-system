@@ -13,12 +13,10 @@ export interface OverTimeList {
 }
 
 export const overTimeRepository = {
-  async fetchOverTime(requestData: any) {
+  async fetchOverTime(_userId: string) {
     try {
-      const response = await axiosInstance.get<GetSampleResponse>(
-        '/overtime/fetch',
-        requestData
-      );
+      const response =
+        await axiosInstance.get<GetSampleResponse>('/overtime/fetch');
       return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       console.error('超過報告情報取得APIコールに失敗しました。', error);

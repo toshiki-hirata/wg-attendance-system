@@ -8,7 +8,7 @@
       @click="closeDialog"
     ></div>
     <Form
-      v-slot="{ errors: formErrors, values: formValues, meta }"
+      v-slot="{ meta }"
       :initial-values="initialFormValues"
       class="relative flex flex-col bg-white p-6 rounded-md shadow-lg h-auto w-full max-w-[500px] justify-between space-y-3"
       @submit="onSubmit"
@@ -86,7 +86,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed, defineEmits } from 'vue';
-import { Form, Field, ErrorMessage, defineRule } from 'vee-validate';
+import { Form, Field, ErrorMessage, defineRule, useForm } from 'vee-validate';
 import { required as originalRequired } from '@vee-validate/rules';
 import SelectComponent from '../components/select.component.vue';
 import InputComponent from '../components/input.component.vue';
@@ -112,7 +112,7 @@ defineRule('decimal', (value: string) => {
 const dateSelected = ref('');
 const dateOptions = ref<{ value: string; text: string }[]>([]);
 
-const initialFormValues = computed(() => ({
+const initialFormValues = computed<OverTime>(() => ({
   applicationDate: dateSelected.value,
   reviewer: '',
   overTime: '',
@@ -123,12 +123,17 @@ const closeDialog = () => {
   isShow.value = false;
 };
 
-const onSubmit = (values: any, { resetForm }: any) => {
+// useForm 関数の戻り値の型から FormReset 型を取得
+type FormReturnType = ReturnType<typeof useForm>;
+type FormReset = FormReturnType['resetForm'];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const onSubmit = (values: any, { resetForm }: { resetForm: FormReset }) => {
+  const typedValues = values as OverTime;
   const submissionData = {
-    applicationDate: values.applicationDate,
-    reviewer: values.reviewer,
-    overTime: values.overTime + 'h',
-    reason: values.reason,
+    applicationDate: typedValues.applicationDate,
+    reviewer: typedValues.reviewer,
+    overTime: typedValues.overTime + 'h',
+    reason: typedValues.reason,
   } as OverTime;
   // NOTE: 本来であればここで送信APIをコールする
   emit('onClickSubmit', submissionData);

@@ -17,7 +17,7 @@ export const useOverTimeStore = defineStore('overTimeStore', {
     async fetchOverTimeInfo(userId: string) {
       this.overTimeList = [];
 
-      const response = await overTimeRepository.fetchOverTime(null);
+      const response = await overTimeRepository.fetchOverTime(userId);
 
       this.overTimeList = response.map((item) => ({
         applicationDate: item.applicationDate.replace(/-/g, '/'),
