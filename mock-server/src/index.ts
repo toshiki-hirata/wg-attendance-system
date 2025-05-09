@@ -82,4 +82,35 @@ app.post('/attendances', async (c) => {
   });
 });
 
+// 超過報告情報取得API
+app.get('/overtime/fetch', (c) => {
+  const today = new Date();
+  const lastMonthDate = new Date(today.getFullYear(), today.getMonth() - 1, 2);
+  const nextLastMonthDate = new Date(
+    lastMonthDate.getFullYear(),
+    lastMonthDate.getMonth() - 1,
+    2
+  );
+  return c.json([
+    {
+      applicationDate: today.toISOString().split('T')[0],
+      reviewer: '山田 太郎',
+      overTime: '1.0h',
+      reason: '残業確認画面ロジック実装のため。',
+    },
+    {
+      applicationDate: lastMonthDate.toISOString().split('T')[0],
+      reviewer: '山田 太郎',
+      overTime: '2.5h',
+      reason: '残業確認画面レイアウト実装のため。',
+    },
+    {
+      applicationDate: nextLastMonthDate.toISOString().split('T')[0],
+      reviewer: '山田 太郎',
+      overTime: '2.0h',
+      reason: '打刻画面レイアウト実装のため。',
+    },
+  ]);
+});
+
 app.route('/', router);

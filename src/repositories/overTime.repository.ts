@@ -1,4 +1,5 @@
-import apiClient from './axiosInstance.ts';
+import { axiosInstance } from '../api/axios';
+import type { GetSampleResponse } from '../api/types';
 
 export interface OverTime {
   applicationDate: string;
@@ -14,8 +15,11 @@ export interface OverTimeList {
 export const overTimeRepository = {
   async fetchOverTime(requestData: any) {
     try {
-      const response = await apiClient.post('/overtime/fetch', requestData);
-      return response.data;
+      const response = await axiosInstance.get<GetSampleResponse>(
+        '/overtime/fetch',
+        requestData
+      );
+      return Array.isArray(response.data) ? response.data : [];
     } catch (error) {
       console.error('超過報告情報取得APIコールに失敗しました。', error);
       throw error;

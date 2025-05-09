@@ -9,8 +9,8 @@
     <div class="w-full flex flex-row gap-2 items-center">
       <div>対象月</div>
       <SelectComponent
-        class="flex-grow"
         v-model="dateSelected"
+        class="flex-grow"
         :options="dateOptions"
         @change="handleSelectChange"
       />
@@ -54,16 +54,17 @@
       <div v-if="tableData.length === 0">申請はありません。</div>
     </div>
   </div>
-  <OverTimeInputDialog v-model="isShowDialog" />
+  <OverTimeInputDialog v-model="isShowDialog" @on-click-submit="addOverTime" />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { useSideNavStore, SIDENAV_ITEM } from '/src/stores/sidenav.store';
-import { useLoadingStore } from '/src/stores/loading.store';
-import SelectComponent from '/src/components/select.component.vue';
-import OverTimeInputDialog from '/src/components/overTimeInputDialog.component.vue';
-import { useOverTimeStore } from '/src/stores/overTime.store';
+import { useSideNavStore, SIDENAV_ITEM } from '../stores/sidenav.store';
+import { useLoadingStore } from '../stores/loading.store';
+import SelectComponent from '../components/select.component.vue';
+import OverTimeInputDialog from '../components/overTimeInputDialog.component.vue';
+import { useOverTimeStore } from '../stores/overTime.store';
+import type { OverTime } from '../repositories/overTime.repository';
 
 const sideNavStore = useSideNavStore();
 const loadingStore = useLoadingStore();
@@ -72,7 +73,7 @@ const overtimeInfo = useOverTimeStore();
 const isShowDialog = ref(false);
 
 const dateSelected = ref('');
-const dateOptions = ref([]);
+const dateOptions = ref<{ value: string; text: string }[]>([]);
 
 const requestHeader: { label: string; field: string; width: string }[] = [
   { label: '日付', field: 'applicationDate', width: '20vw' },
@@ -96,10 +97,15 @@ const handleSelectChange = (value: string) => {
   overtimeInfo.filterOverTimeInfo(dateSelected.value);
 };
 
+const addOverTime = (submissionOverTime: OverTime) => {
+  overtimeInfo.addOverTimeInfo(submissionOverTime);
+  overtimeInfo.filterOverTimeInfo(dateSelected.value);
+};
+
 onMounted(async () => {
   loadingStore.setLoading(true);
   sideNavStore.setCurrentItem(SIDENAV_ITEM.OVER_TIME);
-  overtimeInfo.fetchOverTimeInfo();
+  await overtimeInfo.fetchOverTimeInfo('dummyUserId');
 
   const pastThreeMonthsYYYYMM = getPastThreeMonthsYYYYMM();
   for (const yyyymm of pastThreeMonthsYYYYMM) {
