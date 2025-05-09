@@ -99,7 +99,7 @@ defineRule('required', (value: string) => {
   if (originalRequired(value)) {
     return true;
   }
-  return 'この項目は必須です。'; // カスタムエラーメッセージ
+  return 'この項目は必須です。';
 });
 defineRule('decimal', (value: string) => {
   const regex = /^[1-9]\d*\.\d{1}$/;
