@@ -58,7 +58,7 @@
       <div>
         <label class="block text-sm font-medium text-gray-700">理由</label>
         <Field v-slot="{ field, errors }" name="reason" rules="required">
-          <InputComponent v-bind="field" :high="true" />
+          <InputComponent v-bind="field" :high="true" :is-text-field="true" />
           <p v-if="errors.length" class="text-red-500 text-xs mt-1">
             {{ errors[0] }}
           </p>

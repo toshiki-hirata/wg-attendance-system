@@ -31,13 +31,9 @@
         </button>
       </div>
     </div>
-    <div class="flex flex-col gap-4">
-      <HelpIcon />
-      <SettingIcon />
-      <div class="flex items-center w-full gap-2">
-        <UserIcon />
-        {{ userName }}
-      </div>
+    <div class="flex items-center w-full gap-2">
+      <UserIcon />
+      {{ userName }}
     </div>
   </nav>
 </template>
@@ -48,15 +44,13 @@ import { useRouter } from 'vue-router';
 import TimeIcon from '/src/assets/icons/time.icon.vue';
 import ListIcon from '/src/assets/icons/list.icon.vue';
 import UserIcon from '/src/assets/icons/user.icon.vue';
-import HelpIcon from '/src/assets/icons/help.icon.vue';
-import SettingIcon from '/src/assets/icons/setting.icon.vue';
 import { getItemPath } from '/src/routes';
 import { useSideNavStore, SIDENAV_ITEM } from '/src/stores/sidenav.store';
 
 const router = useRouter();
 const sideNavStore = useSideNavStore();
 
-const userName = ref('test.user');
+const userName = ref('田中 二郎');
 
 const onClickItem = (itemName: SIDENAV_ITEM) => {
   if (sideNavStore.currentItem === itemName) {

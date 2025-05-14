@@ -140,4 +140,11 @@ const getPastThreeMonthsYYYYMM = (): string[] => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+td {
+  padding: 8px;
+  word-wrap: break-word;
+  white-space: normal;
+  word-break: break-all;
+}
+</style>
