@@ -85,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, defineEmits } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { Form, Field, ErrorMessage, defineRule, useForm } from 'vee-validate';
 import { required as originalRequired } from '@vee-validate/rules';
 import SelectComponent from '../components/select.component.vue';
