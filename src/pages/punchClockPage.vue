@@ -7,21 +7,21 @@
     <div class="flex flex-col w-full justify-center gap-10">
       <PrimaryButton
         :text="
-          startButton === BUTTON_CONDITION.NOT_ENABLED ? '勤務中' : '勤務開始'
+          attendanceStore.startButton === BUTTON_CONDITION.NOT_ENABLED ? '勤務中' : '勤務開始'
         "
-        :condition="startButton"
+        :condition="attendanceStore.startButton"
         @on-click="onClickStart()"
       />
       <PrimaryButton
         :text="
-          breakButton === BUTTON_CONDITION.NOT_ENABLED ? '休憩中' : '休憩開始'
+          attendanceStore.breakButton === BUTTON_CONDITION.NOT_ENABLED ? '休憩中' : '休憩開始'
         "
-        :condition="breakButton"
+        :condition="attendanceStore.breakButton"
         @on-click="onClickBreak()"
       />
       <PrimaryButton
         text="勤務終了"
-        :condition="endButton"
+        :condition="attendanceStore.endButton"
         @on-click="onClickEnd()"
       />
     </div>
@@ -47,38 +47,29 @@ const currentDate = ref('');
 const currentTime = ref('');
 const week = ['(日)', '(月)', '(火)', '(水)', '(木)', '(金)', '(土)'];
 
-const startButton = ref(BUTTON_CONDITION.ENABLED);
-const breakButton = ref(BUTTON_CONDITION.DISABLED);
-const endButton = ref(BUTTON_CONDITION.DISABLED);
-
 const onClickStart = () => {
-  if (breakButton.value == BUTTON_CONDITION.NOT_ENABLED) {
+  if (attendanceStore.breakButton == BUTTON_CONDITION.NOT_ENABLED) {
     updateAttendance('restart', currentTime.value);
   } else {
     updateAttendance('start', currentTime.value);
   }
-  startButton.value = BUTTON_CONDITION.NOT_ENABLED;
-  breakButton.value = BUTTON_CONDITION.ENABLED;
-  endButton.value = BUTTON_CONDITION.ENABLED;
+  attendanceStore.start();
 };
 const onClickBreak = () => {
-  startButton.value = BUTTON_CONDITION.ENABLED;
-  breakButton.value = BUTTON_CONDITION.NOT_ENABLED;
-  endButton.value = BUTTON_CONDITION.DISABLED;
   updateAttendance('break', currentTime.value);
+  attendanceStore.break();
 };
 const onClickEnd = async () => {
-  startButton.value = BUTTON_CONDITION.ENABLED;
-  breakButton.value = BUTTON_CONDITION.DISABLED;
-  endButton.value = BUTTON_CONDITION.DISABLED;
+  
   updateAttendance('end', currentTime.value);
   const todayAttendance = attendanceStore.attendanceHistory.find(
     (p) => p.date === formatDate(new Date())
-  );
-  if (todayAttendance) {
-    const response = await attendanceStore.postAttendance(todayAttendance);
-    console.log('response', response);
-  }
+    );
+    if (todayAttendance) {
+      const response = await attendanceStore.postAttendance(todayAttendance);
+      console.log('response', response);
+    }
+    attendanceStore.end();
 };
 
 const setCurrent = () => {
