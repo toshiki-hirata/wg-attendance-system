@@ -105,12 +105,4 @@ git merge claude_test/{feature_name}
 - Keep commits focused on a single logical change
 
 ## ハンズオン資料
-
-Vue.jsハンズオン用のプレゼンテーション資料は `hands_on_docs/` ディレクトリで管理されています。
-
-- **資料作成ルール**: `/hands_on_docs/PRESENTATION_RULES.md` を参照
-- **使用ツール**: Marp (Markdown Presentation Ecosystem)
-- **スライド配置**: `/hands_on_docs/slides/` ディレクトリ
-
-詳細な作成ガイドラインとルールについては、上記のPRESENTATION_RULES.mdを確認してください。
-```
+- 資料作成ルール: @hands_on_docs/PRESENTATION_RULES.md
