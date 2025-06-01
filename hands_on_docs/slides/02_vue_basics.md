@@ -107,7 +107,7 @@ import footerComponent from './components/footer.component.vue'
 
 ---
 
-# Vueファイル（.vue）の構成
+# Vueファイル（.vue）を理解しよう
 
 ---
 
@@ -117,22 +117,24 @@ Vueでは、**1つのファイルに画面の見た目と動作をまとめて�
 
 ```vue
 <template>
-  <!-- ここに画面の見た目（HTML）を書く -->
+  <!-- ① 画面の見た目（HTML）を書く場所 -->
 </template>
 
 <script setup lang="ts">
-// ここに画面の動作（JavaScript/TypeScript）を書く
+// ② 画面の動作（JavaScript/TypeScript）を書く場所
 </script>
 
 <style scoped>
-/* ここに見た目の装飾（CSS）を書く（省略可） */
+/* ③ 見た目の装飾（CSS）を書く場所（省略可） */
 </style>
 ```
 
-**ポイント**:
-- 1つのファイルで「見た目」と「動作」を管理
-- ファイル名は `○○.vue` という形式
-- このプロジェクトでは主に `<template>` と `<script>` を使用
+**3つの重要な部分**:
+1. **template**: HTMLで画面の構造を作る
+2. **script**: JavaScriptで動きを作る  
+3. **style**: CSSで見た目を装飾する
+
+これから、この3つの部分をそれぞれ詳しく見ていきましょう！
 
 ---
 
@@ -141,44 +143,61 @@ Vueでは、**1つのファイルに画面の見た目と動作をまとめて�
 ```vue
 <!-- src/pages/punchClockPage.vue -->
 <template>
-  <!-- 画面の見た目部分 -->
-  <div class="max-w-4xl mx-auto">
-    <h1 class="text-3xl font-bold mb-8">打刻</h1>
-    
-    <div class="bg-white rounded-lg shadow p-6">
-      <p class="text-lg mb-4">
-        現在時刻: {{ currentTime }}
-      </p>
-      
-      <button @click="handlePunch">
-        {{ buttonLabel }}
-      </button>
-    </div>
+  <!-- ① templateセクション: 画面の構造 -->
+  <div>
+    <h1>打刻</h1>
+    <p>現在時刻: {{ currentTime }}</p>
+    <button @click="handlePunch">
+      {{ buttonLabel }}
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
-// 画面の動作部分
+// ② scriptセクション: 画面の動作
 import { ref } from 'vue'
 
-// データを定義
 const currentTime = ref('12:34:56')
 const isPunchedIn = ref(false)
-
-// ボタンの表示テキスト
 const buttonLabel = ref('出勤')
 
-// ボタンがクリックされた時の処理
 const handlePunch = () => {
   isPunchedIn.value = !isPunchedIn.value
   buttonLabel.value = isPunchedIn.value ? '退勤' : '出勤'
 }
 </script>
+
+<style scoped>
+/* ③ styleセクション: 見た目の装飾 */
+h1 {
+  font-size: 24px;
+  font-weight: bold;
+}
+</style>
 ```
+
+これから各セクションの役割を詳しく学んでいきます！
 
 ---
 
-# 画面にデータを表示する方法
+# ① templateセクション - 画面の構造を作る
+
+---
+
+## templateの役割
+
+`<template>` セクションでは、**HTMLを使って画面の構造**を定義します。
+
+```vue
+<template>
+  <div>
+    <h1>勤怠管理システム</h1>
+    <p>ようこそ！</p>
+  </div>
+</template>
+```
+
+ただし、普通のHTMLと違って、**Vueの特別な機能**が使えます！
 
 ---
 
@@ -212,9 +231,9 @@ const isActive = ref(true)
 
 ---
 
-## v- で始まる特別な属性（ディレクティブ）
+## templateで使える特別な機能 - ディレクティブ
 
-Vueには `v-` で始まる特別な属性があり、HTMLに動きを加えることができます。
+Vueのtemplateでは、`v-` で始まる特別な属性で動的な機能を追加できます。
 
 ```vue
 <template>
@@ -247,9 +266,9 @@ Vueには `v-` で始まる特別な属性があり、HTMLに動きを加える�
 
 ---
 
-## : （コロン）を使った動的な属性設定
+## : （コロン）を使った属性の動的設定
 
-HTMLの属性（src、class、styleなど）に JavaScript の値を設定したい時は `:` を使います。
+template内で、HTMLの属性に JavaScript の値を設定したい時は `:` を使います。
 
 ```vue
 <template>
@@ -285,7 +304,119 @@ const fontSize = ref(20)
 
 ---
 
-# Tailwind CSSによるスタイリング
+# ② scriptセクション - 画面に動きを与える
+
+---
+
+## scriptの役割
+
+`<script setup>` セクションでは、**画面の動作やデータの管理**を行います。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+// データの定義
+const message = ref('Hello!')
+const count = ref(0)
+
+// 関数の定義
+const increment = () => {
+  count.value++
+}
+</script>
+```
+
+ここで定義したデータや関数は、templateセクションで使うことができます！
+
+---
+
+## templateとscriptの連携
+
+```vue
+<template>
+  <!-- scriptで定義したデータを表示 -->
+  <p>{{ message }}</p>
+  <p>カウント: {{ count }}</p>
+  
+  <!-- scriptで定義した関数を呼び出す -->
+  <button @click="increment">+1</button>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const message = ref('Hello!')
+const count = ref(0)
+
+const increment = () => {
+  count.value++
+}
+</script>
+```
+
+**ポイント**: scriptで定義 → templateで使用
+
+---
+
+# ③ styleセクション - 見た目を整える
+
+---
+
+## styleの役割
+
+`<style>` セクションでは、**CSSを使って見た目を装飾**します。
+
+```vue
+<template>
+  <div class="container">
+    <h1>タイトル</h1>
+    <button class="primary-button">クリック</button>
+  </div>
+</template>
+
+<style scoped>
+.container {
+  padding: 20px;
+  background-color: #f5f5f5;
+}
+
+h1 {
+  color: #333;
+  font-size: 24px;
+}
+
+.primary-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+}
+</style>
+```
+
+**scopedの意味**: このファイルだけに適用されるスタイル
+
+---
+
+## もう一つの方法: Tailwind CSS
+
+実は、このプロジェクトでは **Tailwind CSS** という便利なツールを使って、
+もっと簡単にスタイリングができます！
+
+```vue
+<template>
+  <!-- styleセクションを書かなくても、クラス名だけで装飾できる！ -->
+  <div class="p-5 bg-gray-100">
+    <h1 class="text-2xl text-gray-800">タイトル</h1>
+    <button class="bg-blue-500 text-white px-5 py-2 rounded">
+      クリック
+    </button>
+  </div>
+</template>
+
+<!-- styleセクションが不要！ -->
+```
 
 ---
 
@@ -321,32 +452,48 @@ const fontSize = ref(20)
 ## よく使うTailwindクラス
 
 ### スペーシング
-- `p-4`: padding 1rem
-- `m-4`: margin 1rem
-- `px-4`: 左右padding
-- `mt-4`: 上margin
+- `p-4`: padding（内側の余白）
+- `m-4`: margin（外側の余白）
+- `px-4`: 左右のpadding
+- `mt-4`: 上のmargin
 
 ### テキスト
-- `text-lg`: フォントサイズ
+- `text-lg`: 文字を大きく
 - `font-bold`: 太字
 - `text-center`: 中央揃え
 
-### 背景・枠線
-- `bg-white`: 背景色
-- `border`: 枠線
-- `rounded`: 角丸
-- `shadow`: 影
+### 色・装飾
+- `bg-white`: 白い背景
+- `text-blue-500`: 青い文字
+- `rounded`: 角を丸く
+- `shadow`: 影をつける
 
-### レスポンシブ
-- `sm:`: 640px以上
-- `md:`: 768px以上
-- `lg:`: 1024px以上
+**メリット**: 
+- CSSを書かなくても見た目を整えられる
+- クラス名を見れば、どんな装飾か分かる
+
+---
+
+# 学んだことを確認しよう
 
 ---
 
 ## 🔍 問題（初級）
 
-**Q: Vueのテンプレートで、条件によって要素の表示/非表示を切り替えるディレクティブは？**
+**Q: .vueファイルの3つのセクションのうち、画面の動作を定義するのは？**
+
+A. `<template>`
+B. `<script>`
+C. `<style>`
+D. `<body>`
+
+⏰ 考え時間: 30秒
+
+---
+
+## 🔍 問題（初級） - その2
+
+**Q: Vueのtemplateで、条件によって要素の表示/非表示を切り替えるディレクティブは？**
 
 A. `v-show`
 B. `v-if`
@@ -359,19 +506,21 @@ D. AとBの両方
 
 ## 🔨 問題（中級）- ハンズオン
 
-**お題**: `primaryButton.component.vue`に、ボタンのサイズを変更できる機能を追加してください
+**お題**: `primaryButton.component.vue`を修正して、ボタンのサイズを変更できるようにしてください
 
 **要件**:
-- `size` propを追加（'sm' | 'md' | 'lg'）
-- デフォルトは 'md'
-- Tailwindクラスでサイズを調整
-  - sm: `px-3 py-1 text-sm`
-  - md: `px-4 py-2`
-  - lg: `px-6 py-3 text-lg`
+1. **scriptセクション**で `size` プロパティを追加（'sm' | 'md' | 'lg'）
+2. **templateセクション**でサイズに応じたTailwindクラスを適用
+3. デフォルトサイズは 'md'
+
+**サイズ別のTailwindクラス**:
+- sm: `px-3 py-1 text-sm`
+- md: `px-4 py-2`
+- lg: `px-6 py-3 text-lg`
 
 **ヒント**: 
 - 該当ファイル: `src/components/primaryButton.component.vue`
-- `computed`を使ってクラスを動的に生成
+- 今日学んだ3つのセクションをすべて活用しましょう！
 
 ⏰ 実装時間: 10分
 
@@ -379,7 +528,18 @@ D. AとBの両方
 
 ## 💡 解説（初級問題）
 
-**正解**: D. AとBの両方
+**問題1の正解**: B. `<script>`
+
+**各セクションの役割**:
+- `<template>`: 画面の**構造**（HTML）
+- `<script>`: 画面の**動作**（JavaScript）
+- `<style>`: 画面の**装飾**（CSS）
+
+---
+
+## 💡 解説（初級問題） - その2
+
+**問題2の正解**: D. AとBの両方
 
 **`v-if` と `v-show` の違い**:
 
@@ -454,10 +614,19 @@ const buttonClasses = computed(() => {
 ## まとめ
 
 ### 今日学んだこと
-- ✅ Vueアプリケーションの基本構造
-- ✅ .vueファイルの書き方（見た目と動作をまとめて管理）
-- ✅ データの表示方法（{{ }} や v- ディレクティブ）
-- ✅ Tailwind CSSでのスタイリング
+
+**Vueアプリケーションの基本構造**
+- ✅ プロジェクトの構成とmain.ts、App.vueの役割
+
+**.vueファイルの3つのセクション**
+- ✅ `<template>`: HTMLで画面の構造を作る
+- ✅ `<script>`: JavaScriptで動作を定義する
+- ✅ `<style>`: CSSで見た目を装飾する（またはTailwind CSSを使う）
+
+**templateで使える機能**
+- ✅ `{{ }}` でデータを表示
+- ✅ `v-` ディレクティブで動的な機能を追加
+- ✅ `:` で属性を動的に設定
 
 ### 次回予告
 - ロジックの実装
