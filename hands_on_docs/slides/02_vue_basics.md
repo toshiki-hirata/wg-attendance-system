@@ -455,88 +455,66 @@ h1 {
 
 ## 🔍 問題（初級）
 
-**Q: .vueファイルの3つのセクションのうち、画面の動作を定義するのは？**
+**Q: scriptで定義した変数 `userName` の値を画面に表示するには、どのコードが適切？**
 
-A. `<template>`
-B. `<script>`
-C. `<style>`
-D. `<body>`
+A. `<p>userName</p>`
+B. `<p>{{ userName }}</p>`
+C. `<p>:userName</p>`
+D. `<p v-text="userName">`
 
 ⏰ 考え時間: 30秒
 
 ---
 
-## 🔍 問題（初級） - その2
+## 💡 解説（初級問題）
 
-**Q: Vueのtemplateで、条件によって要素の表示/非表示を切り替えるディレクティブは？**
+**正解**: B. `<p>{{ userName }}</p>`
 
-A. `v-show`
-B. `v-if`
-C. `v-display`
-D. AとBの両方
+**選択肢の解説**:
+- A. `<p>userName</p>` → 文字通り「userName」と表示される
+- B. `<p>{{ userName }}</p>` → **変数の値**が表示される ← **正解！**
+- C. `<p>:userName</p>` → 何も表示されない
+- D. `<p v-text="userName">` → 動くが、`{{ }}` の方が一般的
 
-⏰ 考え時間: 1分
+**重要**: Vueでは `{{ }}` を使ってJavaScriptの値をHTMLに表示する
+
+```vue
+<script setup>
+const userName = ref('田中太郎')
+</script>
+
+<template>
+  <p>{{ userName }}</p>  <!-- 「田中太郎」と表示される -->
+</template>
+```
 
 ---
 
 ## 🔨 問題（中級）- ハンズオン
 
-**お題**: `primaryButton.component.vue`を修正して、ボタンのサイズを変更できるようにしてください
+**お題**: 時刻表示画面を完成させてください
+
+**現在の状況**:
+- 渡されたコードは時刻表示機能が未完成
+- 現在時刻が「--:--:--」のまま更新されない
 
 **要件**:
-1. **scriptセクション**で `size` プロパティを追加（'sm' | 'md' | 'lg'）
-2. **templateセクション**でサイズに応じたTailwindクラスを適用
-3. デフォルトサイズは 'md'
+1. **scriptセクション**で現在時刻を取得する処理を実装
+2. **templateセクション**で取得した時刻を表示
+3. 1秒ごとに時刻が更新されるようにする
 
-**サイズ別のTailwindクラス**:
-- sm: `px-3 py-1 text-sm`
-- md: `px-4 py-2`
-- lg: `px-6 py-3 text-lg`
+**完成目標**:
+```
+2025/01/06(月)
+12:34:56  ← リアルタイムで更新される
+```
 
 **ヒント**: 
-- 該当ファイル: `src/components/primaryButton.component.vue`
-- 今日学んだ3つのセクションをすべて活用しましょう！
+- `setInterval` を使って1秒ごとに更新
+- `new Date()` で現在時刻を取得
+- 時・分・秒は2桁表示（例：09:05:03）
 
 ⏰ 実装時間: 10分
-
----
-
-## 💡 解説（初級問題）
-
-**問題1の正解**: B. `<script>`
-
-**各セクションの役割**:
-- `<template>`: 画面の**構造**（HTML）
-- `<script>`: 画面の**動作**（JavaScript）
-- `<style>`: 画面の**装飾**（CSS）
-
----
-
-## 💡 解説（初級問題） - その2
-
-**問題2の正解**: D. AとBの両方
-
-**`v-if` と `v-show` の違い**:
-
-### v-if
-- 条件がfalseの場合、**DOMから完全に削除**
-- 切り替えコストが高い
-- 初期表示コストが低い
-
-```vue
-<div v-if="isVisible">条件付き表示</div>
-```
-
-### v-show
-- 条件がfalseの場合、**CSS display: none** で非表示
-- 切り替えコストが低い
-- 初期表示コストが高い
-
-```vue
-<div v-show="isVisible">条件付き表示</div>
-```
-
-**使い分け**: 頻繁に切り替える場合は`v-show`、そうでない場合は`v-if`
 
 ---
 
@@ -545,44 +523,53 @@ D. AとBの両方
 **実装例**:
 
 ```vue
-<!-- src/components/primaryButton.component.vue -->
 <template>
-  <button
-    :class="buttonClasses"
-    :disabled="disabled"
-    @click="$emit('click')"
-  >
-    {{ label }}
-  </button>
+  <div class="text-center">
+    <!-- templateで時刻を表示 -->
+    <div>{{ currentDate }}</div>
+    <div class="text-[50px]">{{ currentTime }}</div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, onMounted } from 'vue'
 
-type ButtonSize = 'sm' | 'md' | 'lg'
+// データを管理する変数
+const currentDate = ref('')
+const currentTime = ref('')
 
-const props = withDefaults(defineProps<{
-  label: string
-  disabled?: boolean
-  size?: ButtonSize
-}>(), {
-  disabled: false,
-  size: 'md'
-})
-
-const buttonClasses = computed(() => {
-  const baseClasses = 'bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50'
+// 現在時刻を取得・フォーマットする関数
+const updateTime = () => {
+  const now = new Date()
   
-  const sizeClasses = {
-    sm: 'px-3 py-1 text-sm',
-    md: 'px-4 py-2',
-    lg: 'px-6 py-3 text-lg'
-  }
+  // 日付の作成（2025/01/06(月) 形式）
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const date = String(now.getDate()).padStart(2, '0')
+  const dayNames = ['日', '月', '火', '水', '木', '金', '土']
+  const day = dayNames[now.getDay()]
+  currentDate.value = `${year}/${month}/${date}(${day})`
   
-  return `${baseClasses} ${sizeClasses[props.size]}`
+  // 時刻の作成（12:34:56 形式）
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  const seconds = String(now.getSeconds()).padStart(2, '0')
+  currentTime.value = `${hours}:${minutes}:${seconds}`
+}
+
+// コンポーネントがマウントされた時に実行
+onMounted(() => {
+  updateTime() // 初回実行
+  setInterval(updateTime, 1000) // 1秒ごとに更新
 })
 </script>
 ```
+
+**ポイント**:
+- `ref()` でリアクティブなデータを作成
+- `onMounted()` でコンポーネント開始時の処理を定義
+- `setInterval()` で定期的な更新を実現
+- `padStart()` で2桁のゼロ埋めを実装
 
 ---
 
