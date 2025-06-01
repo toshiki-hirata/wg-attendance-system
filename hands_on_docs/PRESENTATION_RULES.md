@@ -112,6 +112,8 @@ const message: string = 'Hello Vue!';
 
 #### 問題スライドのフォーマット
 
+- サンプル問題: @./SAMPLE_PROBLEM.md
+
 ##### 初級問題（選択式）
 ```markdown
 ## 🔍 問題（初級）
