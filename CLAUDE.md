@@ -68,3 +68,30 @@ npm run lint:fix
 3. **Japanese UI**: All user-facing text is in Japanese
 4. **Import Paths**: Use absolute imports from root (e.g., `/src/components/...`)
 5. **Button States**: Components use enums for state management (e.g., `BUTTON_CONDITION`)
+
+## Git Workflow Rules
+
+### Branch Management
+1. **Create feature branches for each unit of work**: Always create a new branch for any modifications, no matter how small
+2. **Branch naming convention**: Use `claude_test/{feature_name}` format
+   - Example: `claude_test/add-validation`, `claude_test/fix-api-error`
+3. **Merge strategy**: After completing and testing changes, merge to `claude_test/main`
+
+### Workflow Steps
+```bash
+# 1. Create a new feature branch
+git checkout -b claude_test/{feature_name}
+
+# 2. Make changes and commit
+git add .
+git commit -m "Descriptive commit message"
+
+# 3. After final checks, merge to claude_test/main
+git checkout claude_test/main
+git merge claude_test/{feature_name}
+```
+
+### Important Notes
+- Never work directly on `claude_test/main` branch
+- Always ensure lint and build pass before merging
+- Keep commits focused on a single logical change
