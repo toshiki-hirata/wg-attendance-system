@@ -1,9 +1,33 @@
 ---
 marp: true
-theme: default
+theme: vue-handson
 paginate: true
 backgroundColor: #fff
 footer: 'Vue.js ハンズオン - 勤怠管理アプリ'
+style: |
+  section {
+    font-size: 26px;
+  }
+  pre {
+    font-size: 0.6em !important;
+    line-height: 1.1 !important;
+    margin: 0.6em 0 !important;
+    padding: 0.6em !important;
+    max-height: 55vh;
+    overflow-y: auto;
+  }
+  h2 {
+    font-size: 1.7em;
+    margin-bottom: 0.3em;
+    margin-top: 0.5em;
+  }
+  p, li {
+    margin: 0.4em 0;
+    line-height: 1.3;
+  }
+  ul, ol {
+    margin: 0.5em 0;
+  }
 ---
 
 # Session 2: Vueアプリ全体の構成、HTML、見た目の実装
@@ -103,9 +127,8 @@ Vueでは、**1つのファイルに画面の見た目と動作をまとめて�
 ## 実際の.vueファイルを見てみよう
 
 ```vue
-<!-- src/pages/punchClockPage.vue -->
 <template>
-  <!-- ① templateセクション: 画面の構造 -->
+  <!-- ① 画面の構造 -->
   <div>
     <h1>打刻</h1>
     <p>現在時刻: {{ currentTime }}</p>
@@ -115,26 +138,21 @@ Vueでは、**1つのファイルに画面の見た目と動作をまとめて�
   </div>
 </template>
 
-<script setup lang="ts">
-// ② scriptセクション: 画面の動作
+<script setup>
+// ② 画面の動作
 import { ref } from 'vue'
 
 const currentTime = ref('12:34:56')
-const isPunchedIn = ref(false)
 const buttonLabel = ref('出勤')
 
 const handlePunch = () => {
-  isPunchedIn.value = !isPunchedIn.value
-  buttonLabel.value = isPunchedIn.value ? '退勤' : '出勤'
+  // ボタンをクリックした時の処理
 }
 </script>
 
 <style scoped>
-/* ③ styleセクション: 見た目の装飾 */
-h1 {
-  font-size: 24px;
-  font-weight: bold;
-}
+/* ③ 見た目の装飾 */
+h1 { font-size: 24px; }
 </style>
 ```
 
@@ -198,10 +216,9 @@ Vueでは `{{ }}` （二重波括弧）を使って、JavaScriptのデータをH
   <p>状態: {{ isActive ? 'アクティブ' : '非アクティブ' }}</p>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue'
 
-// 表示したいデータを定義
 const message = ref('Hello Vue!')
 const count = ref(10)
 const isActive = ref(true)
@@ -222,9 +239,9 @@ Vueのtemplateでは、`v-` で始まる特別な属性で動的な機能を追�
 
 ```vue
 <template>
-  <!-- v-if: 条件によって表示/非表示を切り替える -->
+  <!-- v-if: 条件によって表示/非表示 -->
   <div v-if="showMessage">
-    このメッセージは showMessage が true の時だけ表示されます
+    メッセージを表示
   </div>
   
   <!-- v-for: 配列の要素を繰り返し表示 -->
@@ -235,12 +252,11 @@ Vueのtemplateでは、`v-` で始まる特別な属性で動的な機能を追�
   </ul>
 </template>
 
-<script setup lang="ts">
+<script setup>
 const showMessage = ref(true)
 const items = ref([
   { id: 1, name: '田中' },
-  { id: 2, name: '鈴木' },
-  { id: 3, name: '佐藤' }
+  { id: 2, name: '鈴木' }
 ])
 </script>
 ```
@@ -251,16 +267,16 @@ const items = ref([
 
 ```vue
 <template>
-  <!-- v-model: 入力欄とデータを連動させる -->
+  <!-- v-model: 入力欄とデータを連動 -->
   <input v-model="inputValue" />
-  <p>入力した内容: {{ inputValue }}</p>
+  <p>入力内容: {{ inputValue }}</p>
   
-  <!-- @click: クリックした時の処理を設定 -->
-  <button @click="handleClick">クリックしてね</button>
+  <!-- @click: クリック時の処理 -->
+  <button @click="handleClick">クリック</button>
   <p>クリック回数: {{ clickCount }}</p>
 </template>
 
-<script setup lang="ts">
+<script setup>
 const inputValue = ref('')
 const clickCount = ref(0)
 
@@ -288,7 +304,7 @@ const handleClick = () => {
 `<script setup>` セクションでは、**画面の動作やデータの管理**を行います。
 
 ```vue
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue'
 
 // データの定義
@@ -318,7 +334,7 @@ const increment = () => {
   <button @click="increment">+1</button>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue'
 
 const message = ref('Hello!')
@@ -520,29 +536,26 @@ const userName = ref('田中太郎')
 
 ## 💡 解説（中級問題）
 
-**実装例**:
+**実装の全体像**:
 
 ```vue
 <template>
   <div class="text-center">
-    <!-- templateで時刻を表示 -->
     <div>{{ currentDate }}</div>
     <div class="text-[50px]">{{ currentTime }}</div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted } from 'vue'
 
-// データを管理する変数
 const currentDate = ref('')
 const currentTime = ref('')
 
-// 現在時刻を取得・フォーマットする関数
 const updateTime = () => {
   const now = new Date()
   
-  // 日付の作成（2025/01/06(月) 形式）
+  // 日付の作成
   const year = now.getFullYear()
   const month = String(now.getMonth() + 1).padStart(2, '0')
   const date = String(now.getDate()).padStart(2, '0')
@@ -550,22 +563,25 @@ const updateTime = () => {
   const day = dayNames[now.getDay()]
   currentDate.value = `${year}/${month}/${date}(${day})`
   
-  // 時刻の作成（12:34:56 形式）
+  // 時刻の作成
   const hours = String(now.getHours()).padStart(2, '0')
   const minutes = String(now.getMinutes()).padStart(2, '0')
   const seconds = String(now.getSeconds()).padStart(2, '0')
   currentTime.value = `${hours}:${minutes}:${seconds}`
 }
 
-// コンポーネントがマウントされた時に実行
 onMounted(() => {
-  updateTime() // 初回実行
-  setInterval(updateTime, 1000) // 1秒ごとに更新
+  updateTime()
+  setInterval(updateTime, 1000)
 })
 </script>
 ```
 
-**ポイント**:
+---
+
+## 解説のポイント
+
+**重要な概念**:
 - `ref()` でリアクティブなデータを作成
 - `onMounted()` でコンポーネント開始時の処理を定義
 - `setInterval()` で定期的な更新を実現
