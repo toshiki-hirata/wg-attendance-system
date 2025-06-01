@@ -228,44 +228,6 @@ Vueのtemplateでは、`v-` で始まる特別な属性で動的な機能を追�
 
 ---
 
-## : （コロン）を使った属性の動的設定
-
-template内で、HTMLの属性に JavaScript の値を設定したい時は `:` を使います。
-
-```vue
-<template>
-  <!-- 画像のURLを動的に設定 -->
-  <img :src="imageUrl" :alt="imageAlt" />
-  
-  <!-- クラスを条件によって付け外し -->
-  <div :class="{ active: isActive }">
-    isActive が true の時、active クラスが付きます
-  </div>
-  
-  <!-- スタイルを動的に変更 -->
-  <div :style="{ color: textColor, fontSize: fontSize + 'px' }">
-    文字の色とサイズが変わります
-  </div>
-  
-  <!-- 普通の書き方との比較 -->
-  <img src="固定のURL" />        <!-- 固定値 -->
-  <img :src="imageUrl" />         <!-- 動的な値 -->
-</template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-
-const imageUrl = ref('/path/to/image.jpg')
-const isActive = ref(true)
-const textColor = ref('red')
-const fontSize = ref(20)
-</script>
-```
-
-**ポイント**: `:属性名="JavaScript の値"` で動的に値を設定できます
-
----
-
 # ② scriptセクション - 画面に動きを与える
 
 ---
