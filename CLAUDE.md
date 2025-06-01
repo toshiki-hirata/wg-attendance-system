@@ -6,6 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a Vue 3 + TypeScript attendance management system (勤怠管理アプリ) with time tracking and overtime management features.
 
+## プロジェクトの前提
+
+- プロジェクトは勤怠管理システムの開発を目的としている
+- 日本の労働環境と法規に準拠したシステム設計が求められる
+- ユーザーインターフェースは日本語で実装する
+- このプロジェクトは、Vueのハンズオンに利用するサンプルアプリ
+- このアプリをベースにして、VueやPiniaなどの周辺パッケージの理解を深めることを目的にしている
+
 ## Commands
 
 ### Development
@@ -95,3 +103,4 @@ git merge claude_test/{feature_name}
 - Never work directly on `claude_test/main` branch
 - Always ensure lint and build pass before merging
 - Keep commits focused on a single logical change
+```
