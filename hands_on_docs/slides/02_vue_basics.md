@@ -41,69 +41,31 @@ wg-attendance-system/
 ├── src/
 │   ├── main.ts          # アプリケーションのエントリーポイント
 │   ├── App.vue          # ルートコンポーネント
+│   ├── routes.ts        # ルーティング設定
+│   ├── style.css        # グローバルスタイル
+│   ├── api/             # API通信関連
+│   ├── assets/          # 画像やアイコン
 │   ├── components/      # 再利用可能なコンポーネント
 │   ├── pages/           # ページコンポーネント
-│   ├── stores/          # Pinia ストア
-│   └── routes.ts        # ルーティング設定
+│   ├── repositories/    # データ取得ロジック
+│   ├── stores/          # Pinia ストア（状態管理）
+│   └── utils/           # ユーティリティ関数
 └── index.html           # HTMLエントリーポイント
 ```
 
 ---
 
-## main.ts - アプリケーションの起点
+## 各フォルダの役割
 
-```typescript
-// src/main.ts
-import { createApp } from 'vue'
-import App from './App.vue'
-import './style.css'
+- **components/**: ボタンや入力欄など、いろいろな画面で使い回す部品
+- **pages/**: 打刻画面や残業申請画面など、1つの完全な画面
+- **stores/**: アプリ全体で共有するデータを管理する場所
+- **api/**: HTTPリクエストの基本設定（axios設定、型定義など）
+- **assets/**: 画像やアイコンなどの静的ファイル
+- **repositories/**: api/を使って実際にデータを取得・送信する処理
+- **utils/**: 日付フォーマットなど、便利な関数を置く場所
 
-// Vueアプリケーションを作成
-const app = createApp(App)
-
-// HTMLの <div id="app"></div> に接続
-app.mount('#app')
-```
-
-**何をしているか**:
-1. `App.vue` を読み込む
-2. Vueアプリケーションを作成
-3. `index.html` の `<div id="app">` 部分に表示
-
-※ 実際のプロジェクトでは、ここに様々な設定を追加していきます
-
----
-
-## App.vue - アプリ全体の枠組み
-
-```vue
-<!-- src/App.vue -->
-<template>
-  <div class="flex h-screen bg-gray-100">
-    <!-- 左側のメニュー -->
-    <side-nav />
-    
-    <!-- 中央のメインコンテンツ -->
-    <main class="flex-1 p-6 overflow-y-auto">
-      <!-- ページの内容がここに表示される -->
-      <router-view />
-    </main>
-    
-    <!-- 下部のフッター -->
-    <footer-component />
-  </div>
-</template>
-
-<script setup lang="ts">
-// 他の.vueファイルを読み込んで使う
-import sideNav from './components/sideNav.component.vue'
-import footerComponent from './components/footer.component.vue'
-</script>
-```
-
-**このファイルの役割**:
-- アプリ全体のレイアウトを定義
-- 他の.vueファイル（コンポーネント）を組み合わせて使用
+**📍 今回のハンズオンでは**: 主に **components/** と **pages/** の.vueファイルを触りながら、画面の作り方を学びます！
 
 ---
 
