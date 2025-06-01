@@ -38,12 +38,41 @@ hands_on_docs/
 ```yaml
 ---
 marp: true
-theme: default
+theme: vue-handson
 paginate: true
 backgroundColor: #fff
 footer: 'Vue.js ハンズオン - 勤怠管理アプリ'
+style: |
+  section {
+    font-size: 26px;
+  }
+  pre {
+    font-size: 0.6em !important;
+    line-height: 1.1 !important;
+    margin: 0.6em 0 !important;
+    padding: 0.6em !important;
+    max-height: 55vh;
+    overflow-y: auto;
+  }
+  h2 {
+    font-size: 1.7em;
+    margin-bottom: 0.3em;
+    margin-top: 0.5em;
+  }
+  p, li {
+    margin: 0.4em 0;
+    line-height: 1.3;
+  }
+  ul, ol {
+    margin: 0.5em 0;
+  }
 ---
 ```
+
+### カスタムテーマについて
+- カスタムテーマファイル: `assets/custom-theme.css`
+- 縦はみ出し問題を解決するため、フォントサイズとスペーシングを最適化
+- コードブロックには自動スクロール機能を追加（`max-height: 55vh`）
 
 ## スライド作成ルール
 
