@@ -159,7 +159,26 @@ h1 {
 </template>
 ```
 
-ただし、普通のHTMLと違って、**Vueの特別な機能**が使えます！
+---
+
+## HTMLとは？
+
+**HTML（HyperText Markup Language）** は、Webページの構造を作るための言語です。
+
+**基本的な仕組み**:
+- **タグ**と呼ばれる `<>` で囲まれた命令を使う
+- タグで「これは見出し」「これは段落」などを指定する
+- ブラウザがタグを読んで、画面に表示する
+
+```html
+<h1>これは見出し</h1>
+<p>これは段落の文章です</p>
+<button>これはボタン</button>
+```
+
+**重要**: タグには開始 `<h1>` と終了 `</h1>` がある
+
+ただし、Vueのtemplateでは普通のHTMLに加えて、**特別な機能**が使えます！
 
 ---
 
@@ -197,6 +216,10 @@ const isActive = ref(true)
 
 Vueのtemplateでは、`v-` で始まる特別な属性で動的な機能を追加できます。
 
+---
+
+## ディレクティブ① 表示制御
+
 ```vue
 <template>
   <!-- v-if: 条件によって表示/非表示を切り替える -->
@@ -210,23 +233,51 @@ Vueのtemplateでは、`v-` で始まる特別な属性で動的な機能を追�
       {{ item.name }}
     </li>
   </ul>
-  
+</template>
+
+<script setup lang="ts">
+const showMessage = ref(true)
+const items = ref([
+  { id: 1, name: '田中' },
+  { id: 2, name: '鈴木' },
+  { id: 3, name: '佐藤' }
+])
+</script>
+```
+
+---
+
+## ディレクティブ② 入力・イベント
+
+```vue
+<template>
   <!-- v-model: 入力欄とデータを連動させる -->
   <input v-model="inputValue" />
   <p>入力した内容: {{ inputValue }}</p>
   
   <!-- @click: クリックした時の処理を設定 -->
   <button @click="handleClick">クリックしてね</button>
+  <p>クリック回数: {{ clickCount }}</p>
 </template>
+
+<script setup lang="ts">
+const inputValue = ref('')
+const clickCount = ref(0)
+
+const handleClick = () => {
+  clickCount.value++
+}
+</script>
 ```
 
-**よく使うディレクティブ**:
+**よく使うディレクティブまとめ**:
 - `v-if` → 表示/非表示の切り替え
 - `v-for` → 繰り返し表示
 - `v-model` → 入力欄との連動
 - `@click` → クリック時の処理
 
 ---
+
 
 # ② scriptセクション - 画面に動きを与える
 
