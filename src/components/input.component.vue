@@ -25,8 +25,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineModel } from 'vue';
-
 const inputValue = defineModel({ type: String, required: true });
 
 const props = defineProps({

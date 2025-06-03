@@ -21,9 +21,9 @@ export enum BUTTON_CONDITION {
 </script>
 
 <script setup lang="ts">
-import { PropTyle } from 'vue';
+import type { PropType } from 'vue';
 
-const props = defineProps({
+defineProps({
   text: { type: String, required: true },
   condition: { type: String as PropType<BUTTON_CONDITION>, required: true },
 });
