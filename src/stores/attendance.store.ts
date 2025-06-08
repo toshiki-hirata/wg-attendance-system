@@ -1,14 +1,15 @@
 import { defineStore } from 'pinia';
-import { axiosInstance } from '../api/axios';
-import type { GetSampleResponse } from '../api/types';
-import type { Attendance } from '../components/footer.component.vue';
 import { BUTTON_CONDITION } from '../components/primaryButton.component.vue';
+import {
+  punchClockRepository,
+  type Attendance,
+} from '../repositories/punchClock.repository';
 
 export interface AttendanceState {
   attendanceHistory: Attendance[];
-  startButton: BUTTON_CONDITION,
-  breakButton: BUTTON_CONDITION,
-  endButton: BUTTON_CONDITION,
+  startButton: BUTTON_CONDITION;
+  breakButton: BUTTON_CONDITION;
+  endButton: BUTTON_CONDITION;
 }
 
 export const useAttendanceStore = defineStore('attendance.attendance', {
@@ -24,44 +25,23 @@ export const useAttendanceStore = defineStore('attendance.attendance', {
   },
   actions: {
     async fetchAttendanceHistory() {
-      try {
-        const response = await axiosInstance.get<GetSampleResponse>(
-          '/attendances/history'
-        );
-        const dataArray = Array.isArray(response.data) ? response.data : [];
-        this.attendanceHistory = dataArray.map((item) => ({
-          date: item.date,
-          start: item.startTime,
-          break: item.breaks[0]?.start || '',
-          restart: item.breaks[0]?.end || '',
-          end: item.endTime,
-        }));
-        // console.log('GET request successful:', this.attendanceHistory);
-      } catch (error) {
-        console.error('GET request failed:', error);
-      }
+      const response = await punchClockRepository.fetchAttendanceHistory();
+      this.attendanceHistory = response.map((item) => ({
+        date: item.date,
+        start: item.startTime,
+        break: item.breaks[0]?.start || '',
+        restart: item.breaks[0]?.end || '',
+        end: item.endTime,
+      }));
+      // console.log('GET request successful:', this.attendanceHistory);
     },
     addAttendanceHistory(attendance: Attendance) {
       this.attendanceHistory.push(attendance);
     },
     async postAttendance(attendance: Attendance) {
-      try {
-        const response = await axiosInstance.post('/attendances', {
-          date: attendance.date,
-          startTime: attendance.start,
-          endTime: attendance.end,
-          breaks: [
-            {
-              start: attendance.break,
-              end: attendance.restart,
-            },
-          ],
-        });
-        return response.data;
-      } catch (error) {
-        console.error('POST request failed:', error);
-        throw error;
-      }
+      const response =
+        await punchClockRepository.submitAttendanceHistory(attendance);
+      return response;
     },
     start() {
       this.startButton = BUTTON_CONDITION.NOT_ENABLED;

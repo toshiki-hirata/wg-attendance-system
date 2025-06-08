@@ -60,17 +60,10 @@ import { ref, onMounted } from 'vue';
 import ArrowIcon from '../assets/icons/arrow.icon.vue';
 import { useAttendanceStore } from '../stores/attendance.store';
 import { formatDate, formatMMDD } from '../utils/dateFormatter';
+import type { Attendance } from '../repositories/punchClock.repository';
 
 const attendanceStore = useAttendanceStore();
 const isShow = ref(false);
-
-export interface Attendance {
-  date: string;
-  start: string;
-  break: string;
-  restart: string;
-  end: string;
-}
 
 const attendanceLabels: Record<keyof Omit<Attendance, 'date'>, string> = {
   start: '勤務開始',
