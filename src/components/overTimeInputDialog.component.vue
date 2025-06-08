@@ -130,6 +130,7 @@ type FormReturnType = ReturnType<typeof useForm>;
 type FormReset = FormReturnType['resetForm'];
 
 const onSubmit = async (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   values: any,
   { resetForm }: { resetForm: FormReset }
 ) => {
