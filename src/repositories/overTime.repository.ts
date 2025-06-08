@@ -23,4 +23,18 @@ export const overTimeRepository = {
       throw error;
     }
   },
+  async submitOvertime(overTime: OverTime) {
+    try {
+      const response = await axiosInstance.post('/overtime', {
+        applicationDate: overTime.applicationDate,
+        reviewer: overTime.reviewer,
+        overTime: overTime.overTime,
+        reason: overTime.reason,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('超過勤務登録APIコールに失敗しました。', error);
+      throw error;
+    }
+  },
 };

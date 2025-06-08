@@ -28,6 +28,9 @@ export const useOverTimeStore = defineStore('overTimeStore', {
 
       this.filteredOverTimeList = this.$state.overTimeList;
     },
+    async postOverTimeInfo(overTime: OverTime) {
+      await overTimeRepository.submitOvertime(overTime);
+    },
     removeOverTimeInfo(date: string) {
       this.overTimeList = this.overTimeList.filter(
         (item) => item.applicationDate !== date

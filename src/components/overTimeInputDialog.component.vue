@@ -91,9 +91,11 @@ import { required as originalRequired } from '@vee-validate/rules';
 import SelectComponent from '../components/select.component.vue';
 import InputComponent from '../components/input.component.vue';
 import type { OverTime } from '../repositories/overTime.repository';
+import { useOverTimeStore } from '../stores/overTime.store';
 
 const isShow = defineModel<boolean>({ required: true });
 const emit = defineEmits(['onClickSubmit']);
+const overtimeInfo = useOverTimeStore();
 
 defineRule('required', (value: string) => {
   if (originalRequired(value)) {
@@ -126,8 +128,11 @@ const closeDialog = () => {
 // useForm 関数の戻り値の型から FormReset 型を取得
 type FormReturnType = ReturnType<typeof useForm>;
 type FormReset = FormReturnType['resetForm'];
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const onSubmit = (values: any, { resetForm }: { resetForm: FormReset }) => {
+
+const onSubmit = async (
+  values: any,
+  { resetForm }: { resetForm: FormReset }
+) => {
   const typedValues = values as OverTime;
   const submissionData = {
     applicationDate: typedValues.applicationDate,
@@ -135,7 +140,7 @@ const onSubmit = (values: any, { resetForm }: { resetForm: FormReset }) => {
     overTime: typedValues.overTime + 'h',
     reason: typedValues.reason,
   } as OverTime;
-  // NOTE: 本来であればここで送信APIをコールする
+  await overtimeInfo.postOverTimeInfo(submissionData);
   emit('onClickSubmit', submissionData);
   alert('申請が送信されました。');
   resetForm({
