@@ -60,17 +60,10 @@ import { ref, onMounted } from 'vue';
 import ArrowIcon from '../assets/icons/arrow.icon.vue';
 import { useAttendanceStore } from '../stores/attendance.store';
 import { formatDate, formatMMDD } from '../utils/dateFormatter';
+import type { Attendance } from '../repositories/punchClock.repository';
 
 const attendanceStore = useAttendanceStore();
 const isShow = ref(false);
-
-export interface Attendance {
-  date: string;
-  start: string;
-  break: string;
-  restart: string;
-  end: string;
-}
 
 const attendanceLabels: Record<keyof Omit<Attendance, 'date'>, string> = {
   start: '勤務開始',
@@ -79,7 +72,6 @@ const attendanceLabels: Record<keyof Omit<Attendance, 'date'>, string> = {
   end: '勤務終了',
 };
 
-// ...existing code...
 const header = ref<{ label: string; field: string; width: string }[]>([
   { label: '', field: 'label', width: '150px' },
 ]);
@@ -107,7 +99,10 @@ onMounted(async () => {
 });
 
 /**
- * 今日の日付を基準に指定された範囲の日付配列を生成
+ * 今日の日付を基準に指定された範囲の日付配列を生成します。
+ * @param {number} startOffset - 今日からのオフセット開始日。
+ * @param {number} count - 生成する日付の数。
+ * @returns {{ date: Date; formattedDate: string; formattedShortDate: string }[]} 日付オブジェクトの配列。
  */
 function generateDateRangeFromToday(startOffset: number, count: number) {
   const today = new Date();
@@ -117,7 +112,11 @@ function generateDateRangeFromToday(startOffset: number, count: number) {
 }
 
 /**
- * 指定された基準日から特定の範囲の日付配列を生成
+ * 指定された基準日から特定の範囲の日付配列を生成します。
+ * @param {Date} baseDate - 基準となる日付。
+ * @param {number} startOffset - 基準日からのオフセット開始日。
+ * @param {number} count - 生成する日付の数。
+ * @returns {{ date: Date; formattedDate: string; formattedShortDate: string }[]} 日付オブジェクトの配列。
  */
 function generateDateRange(baseDate: Date, startOffset: number, count: number) {
   const result = [];
@@ -134,7 +133,9 @@ function generateDateRange(baseDate: Date, startOffset: number, count: number) {
 }
 
 /**
- * 日付範囲からヘッダーカラムを生成
+ * 日付範囲からテーブルヘッダーカラムを生成します。
+ * @param {{ date: Date; formattedDate: string; formattedShortDate: string }[]} dateRange - 日付範囲の配列。
+ * @returns {{ label: string; field: string; width: string }[]} ヘッダーカラム定義の配列。
  */
 function generateHeaderColumns(
   dateRange: { date: Date; formattedDate: string; formattedShortDate: string }[]
@@ -147,7 +148,10 @@ function generateHeaderColumns(
 }
 
 /**
- * 欠損している日付のデータを補完した新しい配列を返す
+ * 欠損している日付の打刻データを補完した新しい配列を返します。
+ * @param {{ date: Date; formattedDate: string; formattedShortDate: string }[]} dateRange - 期待される日付範囲の配列。
+ * @param {Attendance[]} existingAttendances - 既存の打刻データの配列。
+ * @returns {Attendance[]} 欠損データが補完された打刻データの新しい配列。
  */
 function fillMissingAttendances(
   dateRange: {

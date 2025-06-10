@@ -70,11 +70,13 @@ const sideNavStore = useSideNavStore();
 const loadingStore = useLoadingStore();
 const overtimeInfo = useOverTimeStore();
 
+// 残業申請ダイアログの表示中状態制御
 const isShowDialog = ref(false);
-
+// 選択した対象月
 const dateSelected = ref('');
+// 残業申請ダイアログで表示する申請日リスト
 const dateOptions = ref<{ value: string; text: string }[]>([]);
-
+// 残業情報表示テーブルのラベル表示名と情報の取得元と表示幅を保持
 const requestHeader: { label: string; field: string; width: string }[] = [
   { label: '日付', field: 'applicationDate', width: '20vw' },
   { label: '時間', field: 'overTime', width: '10vw' },
@@ -82,26 +84,45 @@ const requestHeader: { label: string; field: string; width: string }[] = [
   { label: '申請先', field: 'reviewer', width: '20vw' },
   { label: '', field: 'button', width: '15vw' },
 ];
-
+/**
+ * 残業申請リストの算出プロパティ。
+ * `overtimeInfo.filteredOverTimeList` の値が変わるたびに自動的に再計算されます。
+ * @returns {OverTime[]} フィルタリングされた残業申請リスト、または空の配列。
+ */
 const tableData = computed(() => {
   return overtimeInfo.filteredOverTimeList || [];
 });
-
+/**
+ * 申請取り消しボタン押下時の処理。
+ * 指定された日付の残業申請を削除し、リストを再フィルタリングします。
+ * @param {string} date - 取り消す申請の年月日（YYYY/MM/DD形式）。
+ */
 const onClickRemove = (date: string) => {
   overtimeInfo.removeOverTimeInfo(date);
   overtimeInfo.filterOverTimeInfo(dateSelected.value);
 };
-
+/**
+ * 対象月ドロップダウン変更時の処理。
+ * 選択された月に基づいて残業申請リストをフィルタリングします。
+ * @param {string} value - 選択された対象月（YYYY/MM形式）。
+ */
 const handleSelectChange = (value: string) => {
   dateSelected.value = value;
   overtimeInfo.filterOverTimeInfo(dateSelected.value);
 };
-
+/**
+ * 残業申請ダイアログで申請ボタンが押下されたときの処理。
+ * 新しい残業申請を追加し、リストを再フィルタリングします。
+ * @param {OverTime} submissionOverTime - 送信された残業申請データ。
+ */
 const addOverTime = (submissionOverTime: OverTime) => {
   overtimeInfo.addOverTimeInfo(submissionOverTime);
   overtimeInfo.filterOverTimeInfo(dateSelected.value);
 };
-
+/**
+ * コンポーネントがマウントされた際に実行される処理。
+ * 残業申請情報を取得し、対象月のオプションを生成・設定します。
+ */
 onMounted(async () => {
   loadingStore.setLoading(true);
   sideNavStore.setCurrentItem(SIDENAV_ITEM.OVER_TIME);
@@ -124,7 +145,10 @@ onMounted(async () => {
   });
   loadingStore.setLoading(false);
 });
-
+/**
+ * 現在日から過去3ヶ月間の「YYYY/MM」形式の文字列リストを生成して返します。
+ * @returns {string[]} 過去3ヶ月間のYYYY/MM形式の文字列配列。
+ */
 const getPastThreeMonthsYYYYMM = (): string[] => {
   const now = new Date();
   const result: string[] = [];

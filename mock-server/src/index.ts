@@ -113,4 +113,11 @@ app.get('/overtime/fetch', (c) => {
   ]);
 });
 
+// 超過勤務登録API
+app.post('/overtime', async (c) => {
+  return c.json({
+    data: [],
+  });
+});
+
 app.route('/', router);
