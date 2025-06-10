@@ -10,6 +10,11 @@ export interface Attendance {
 }
 
 export const punchClockRepository = {
+  /**
+   * 打刻情報を取得するためのAPIを呼び出します。
+   * @returns {Promise<GetSampleResponse[]>} 打刻情報の配列、または空の配列を返します。
+   * @throws {Error} APIコールに失敗した場合にエラーをスローします。
+   */
   async fetchAttendanceHistory() {
     try {
       const response = await axiosInstance.get<GetSampleResponse>(
@@ -21,6 +26,12 @@ export const punchClockRepository = {
       throw error;
     }
   },
+  /**
+   * 打刻情報を登録するためのAPIを呼び出します。
+   * @param {Attendance} attendance - 登録する打刻データ。
+   * @returns {Promise<any>} APIからのレスポンスデータを返します。
+   * @throws {Error} APIコールに失敗した場合にエラーをスローします。
+   */
   async submitAttendanceHistory(attendance: Attendance) {
     try {
       const response = await axiosInstance.post('/attendances', {
