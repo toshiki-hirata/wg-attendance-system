@@ -16,19 +16,6 @@ style: |
     max-height: 55vh;
     overflow-y: auto;
   }
-  /* コードブロックのサイズクラス */
-  .code-small pre {
-    font-size: 0.5em !important;
-  }
-  .code-medium pre {
-    font-size: 0.6em !important;
-  }
-  .code-large pre {
-    font-size: 0.7em !important;
-  }
-  .code-xlarge pre {
-    font-size: 0.8em !important;
-  }
   h2 {
     font-size: 1.7em;
     margin-bottom: 0.3em;
@@ -70,6 +57,10 @@ Vue.jsの基本構成とコンポーネントベースの開発を学びます
 # Vueアプリケーションの全体構成
 
 ---
+
+<!--
+  class: code-xlarge
+-->
 
 # プロジェクト構造
 
@@ -146,20 +137,13 @@ Vueでは、**1つのファイルに画面の見た目と動作をまとめて�
   <!-- ① 画面の構造 -->
   <div>
     <h1>打刻</h1>
-    <p>現在時刻: {{ currentTime }}</p>
-    <button @click="handlePunch">
-      {{ buttonLabel }}
-    </button>
   </div>
 </template>
 
 <script setup>
 // ② 画面の動作
 import { ref } from 'vue'
-
-const currentTime = ref('12:34:56')
 const buttonLabel = ref('出勤')
-
 const handlePunch = () => {
   // ボタンをクリックした時の処理
 }
@@ -375,18 +359,13 @@ const increment = () => {
 
 ```jsx
 <template>
-  <div class="container">
+  <div>
     <h1>タイトル</h1>
     <button class="primary-button">クリック</button>
   </div>
 </template>
 
 <style scoped>
-.container {
-  padding: 20px;
-  background-color: #f5f5f5;
-}
-
 h1 {
   color: #333;
   font-size: 24px;
@@ -553,17 +532,6 @@ const userName = ref('田中太郎')
 2. **課題2**: SideNavコンポーネントのアイコン表示を実装
    - 各メニュー項目（打刻、残業申請）にアイコンを表示
    - アイコンコンポーネントは `/src/assets/icons/` に用意済み
-
-**完成目標**:
-- 画面下部に「© 2025 勤怠管理システム」のFooterが表示される
-- サイドナビのメニュー項目に適切なアイコンが表示される
-
-**ヒント**: 
-- 今日学んだ「コンポーネントのインポートと使用」を活用
-- Footerの配置: `src/components/footer.component.vue`
-- アイコンの使用例: `<TimeIcon class="w-5 h-5" />`
-
-⏰ 実装時間: 10分
 
 ---
 
