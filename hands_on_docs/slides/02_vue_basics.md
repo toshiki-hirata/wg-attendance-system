@@ -16,6 +16,19 @@ style: |
     max-height: 55vh;
     overflow-y: auto;
   }
+  /* コードブロックのサイズクラス */
+  .code-small pre {
+    font-size: 0.5em !important;
+  }
+  .code-medium pre {
+    font-size: 0.6em !important;
+  }
+  .code-large pre {
+    font-size: 0.7em !important;
+  }
+  .code-xlarge pre {
+    font-size: 0.8em !important;
+  }
   h2 {
     font-size: 1.7em;
     margin-bottom: 0.3em;
@@ -58,7 +71,7 @@ Vue.jsの基本構成とコンポーネントベースの開発を学びます
 
 ---
 
-## プロジェクト構造
+# プロジェクト構造
 
 ```
 wg-attendance-system/
@@ -79,7 +92,7 @@ wg-attendance-system/
 
 ---
 
-## 各フォルダの役割
+# 各フォルダの役割
 
 - **components/**: ボタンや入力欄など、いろいろな画面で使い回す部品
 - **pages/**: 打刻画面や残業申請画面など、1つの完全な画面
@@ -97,7 +110,7 @@ wg-attendance-system/
 
 ---
 
-## .vueファイルとは？
+# .vueファイルとは？
 
 Vueでは、**1つのファイルに画面の見た目と動作をまとめて書く**ことができます。
 
@@ -124,7 +137,9 @@ Vueでは、**1つのファイルに画面の見た目と動作をまとめて�
 
 ---
 
-## 実際の.vueファイルを見てみよう
+<!-- class: code-small -->
+
+# 実際の.vueファイルを見てみよう
 
 ```jsx
 <template>
@@ -164,7 +179,7 @@ h1 { font-size: 24px; }
 
 ---
 
-## templateの役割
+# templateの役割
 
 `<template>` セクションでは、**HTMLを使って画面の構造**を定義します。
 
@@ -179,7 +194,7 @@ h1 { font-size: 24px; }
 
 ---
 
-## HTMLとは？
+# HTMLとは？
 
 **HTML（HyperText Markup Language）** は、Webページの構造を作るための言語です。
 
@@ -200,7 +215,7 @@ h1 { font-size: 24px; }
 
 ---
 
-## {{ }} を使ってデータを表示
+# `{{ }}` を使ってデータを表示
 
 Vueでは `{{ }}` （二重波括弧）を使って、JavaScriptのデータをHTMLに表示できます。
 
@@ -229,13 +244,13 @@ const isActive = ref(true)
 
 ---
 
-## templateで使える特別な機能 - ディレクティブ
+# templateで使える特別な機能 - ディレクティブ
 
 Vueのtemplateでは、`v-` で始まる特別な属性で動的な機能を追加できます。
 
 ---
 
-## ディレクティブ① 表示制御
+# ディレクティブ① 表示制御
 
 ```jsx
 <template>
@@ -263,7 +278,7 @@ const items = ref([
 
 ---
 
-## ディレクティブ② 入力・イベント
+# ディレクティブ② 入力・イベント
 
 ```jsx
 <template>
@@ -299,7 +314,7 @@ const handleClick = () => {
 
 ---
 
-## scriptの役割
+# scriptの役割
 
 `<script setup>` セクションでは、**画面の動作やデータの管理**を行います。
 
@@ -322,7 +337,7 @@ const increment = () => {
 
 ---
 
-## templateとscriptの連携
+# templateとscriptの連携
 
 ```jsx
 <template>
@@ -354,7 +369,7 @@ const increment = () => {
 
 ---
 
-## styleの役割
+# styleの役割
 
 `<style>` セクションでは、**CSSを使って見た目を装飾**します。
 
@@ -390,7 +405,7 @@ h1 {
 
 ---
 
-## もう一つの方法: Tailwind CSS
+# もう一つの方法: Tailwind CSS
 
 実は、このプロジェクトでは **Tailwind CSS** という便利なツールを使って、
 もっと簡単にスタイリングができます！
@@ -411,7 +426,7 @@ h1 {
 
 ---
 
-## Tailwind CSSの基本
+# Tailwind CSSの基本
 
 ユーティリティファーストのCSSフレームワーク
 
@@ -440,7 +455,13 @@ h1 {
 
 ---
 
-## よく使うTailwindクラス
+<!-- _class: three-columns -->
+
+# よく使うTailwindクラス
+
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+
+<div>
 
 ### スペーシング
 - `p-4`: padding（内側の余白）
@@ -448,10 +469,19 @@ h1 {
 - `px-4`: 左右のpadding
 - `mt-4`: 上のmargin
 
+</div>
+
+<div>
+
 ### テキスト
 - `text-lg`: 文字を大きく
 - `font-bold`: 太字
 - `text-center`: 中央揃え
+- `text-sm`: 文字を小さく
+
+</div>
+
+<div>
 
 ### 色・装飾
 - `bg-white`: 白い背景
@@ -459,9 +489,11 @@ h1 {
 - `rounded`: 角を丸く
 - `shadow`: 影をつける
 
-**メリット**: 
-- CSSを書かなくても見た目を整えられる
-- クラス名を見れば、どんな装飾か分かる
+</div>
+
+</div>
+
+**メリット**: CSSを書かなくても見た目を整えられる・クラス名を見れば、どんな装飾か分かる
 
 ---
 
@@ -469,7 +501,7 @@ h1 {
 
 ---
 
-## 🔍 問題（初級）
+# 🔍 問題（初級）
 
 **Q: scriptで定義した変数 `userName` の値を画面に表示するには、どのコードが適切？**
 
@@ -482,7 +514,7 @@ D. `<p v-text="userName">`
 
 ---
 
-## 💡 解説（初級問題）
+# 💡 解説（初級問題）
 
 **正解**: B. `<p>{{ userName }}</p>`
 
@@ -506,7 +538,7 @@ const userName = ref('田中太郎')
 
 ---
 
-## 🔨 問題（中級）- ハンズオン
+# 🔨 問題（中級）- ハンズオン
 
 **お題**: アプリの基本レイアウトを完成させてください
 
@@ -535,7 +567,7 @@ const userName = ref('田中太郎')
 
 ---
 
-## 💡 解説（中級問題）
+# 💡 解説（中級問題）
 
 **課題1: App.vueへのFooter配置**
 
@@ -571,7 +603,7 @@ import Footer from '/src/components/footer.component.vue'
 
 ---
 
-## 課題2: SideNavのアイコン実装
+# 課題2: SideNavのアイコン実装
 
 ```jsx
 <!-- sideNav.component.vue の一部 -->
@@ -605,7 +637,7 @@ const menuItems = [
 
 ---
 
-## 実装のポイント解説
+# 実装のポイント解説
 
 ### 🎯 課題1のポイント
 
@@ -626,7 +658,7 @@ const menuItems = [
 
 ---
 
-## 🎯 課題2のポイント
+# 🎯 課題2のポイント
 
 **動的コンポーネント `<component :is="">`**:
 - 変数に応じて表示するコンポーネントを切り替える
@@ -650,7 +682,7 @@ const menuItems = [
 
 ---
 
-## まとめ
+# まとめ
 
 ### 今日学んだこと
 
@@ -674,7 +706,7 @@ const menuItems = [
 
 ---
 
-## 🎯 追加課題
+# 🎯 追加課題
 
 時間がある方は以下に挑戦してみてください：
 
