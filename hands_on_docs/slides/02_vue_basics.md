@@ -101,7 +101,7 @@ wg-attendance-system/
 
 Vueでは、**1つのファイルに画面の見た目と動作をまとめて書く**ことができます。
 
-```vue
+```jsx
 <template>
   <!-- ① 画面の見た目（HTML）を書く場所 -->
 </template>
@@ -126,7 +126,7 @@ Vueでは、**1つのファイルに画面の見た目と動作をまとめて�
 
 ## 実際の.vueファイルを見てみよう
 
-```vue
+```jsx
 <template>
   <!-- ① 画面の構造 -->
   <div>
@@ -168,7 +168,7 @@ h1 { font-size: 24px; }
 
 `<template>` セクションでは、**HTMLを使って画面の構造**を定義します。
 
-```vue
+```jsx
 <template>
   <div>
     <h1>勤怠管理システム</h1>
@@ -204,7 +204,7 @@ h1 { font-size: 24px; }
 
 Vueでは `{{ }}` （二重波括弧）を使って、JavaScriptのデータをHTMLに表示できます。
 
-```vue
+```jsx
 <template>
   <!-- 文字を表示 -->
   <p>メッセージ: {{ message }}</p>
@@ -237,7 +237,7 @@ Vueのtemplateでは、`v-` で始まる特別な属性で動的な機能を追�
 
 ## ディレクティブ① 表示制御
 
-```vue
+```jsx
 <template>
   <!-- v-if: 条件によって表示/非表示 -->
   <div v-if="showMessage">
@@ -265,7 +265,7 @@ const items = ref([
 
 ## ディレクティブ② 入力・イベント
 
-```vue
+```jsx
 <template>
   <!-- v-model: 入力欄とデータを連動 -->
   <input v-model="inputValue" />
@@ -303,7 +303,7 @@ const handleClick = () => {
 
 `<script setup>` セクションでは、**画面の動作やデータの管理**を行います。
 
-```vue
+```jsx
 <script setup>
 import { ref } from 'vue'
 
@@ -324,7 +324,7 @@ const increment = () => {
 
 ## templateとscriptの連携
 
-```vue
+```jsx
 <template>
   <!-- scriptで定義したデータを表示 -->
   <p>{{ message }}</p>
@@ -358,7 +358,7 @@ const increment = () => {
 
 `<style>` セクションでは、**CSSを使って見た目を装飾**します。
 
-```vue
+```jsx
 <template>
   <div class="container">
     <h1>タイトル</h1>
@@ -395,7 +395,7 @@ h1 {
 実は、このプロジェクトでは **Tailwind CSS** という便利なツールを使って、
 もっと簡単にスタイリングができます！
 
-```vue
+```jsx
 <template>
   <!-- styleセクションを書かなくても、クラス名だけで装飾できる！ -->
   <div class="p-5 bg-gray-100">
@@ -415,7 +415,7 @@ h1 {
 
 ユーティリティファーストのCSSフレームワーク
 
-```vue
+```jsx
 <template>
   <!-- 基本的なレイアウト -->
   <div class="container mx-auto px-4">
@@ -494,7 +494,7 @@ D. `<p v-text="userName">`
 
 **重要**: Vueでは `{{ }}` を使ってJavaScriptの値をHTMLに表示する
 
-```vue
+```jsx
 <script setup>
 const userName = ref('田中太郎')
 </script>
@@ -508,27 +508,28 @@ const userName = ref('田中太郎')
 
 ## 🔨 問題（中級）- ハンズオン
 
-**お題**: 時刻表示画面を完成させてください
+**お題**: アプリの基本レイアウトを完成させてください
 
 **現在の状況**:
-- 渡されたコードは時刻表示機能が未完成
-- 現在時刻が「--:--:--」のまま更新されない
+- App.vueにはFooterコンポーネントが配置されていない
+- SideNavコンポーネント内のメニュー項目のアイコンが表示されない
 
 **要件**:
-1. **scriptセクション**で現在時刻を取得する処理を実装
-2. **templateセクション**で取得した時刻を表示
-3. 1秒ごとに時刻が更新されるようにする
+1. **課題1**: App.vueにFooterコンポーネントを配置
+   - Footerコンポーネントをimportする
+   - 画面の下部に固定表示されるように配置
+2. **課題2**: SideNavコンポーネントのアイコン表示を実装
+   - 各メニュー項目（打刻、残業申請）にアイコンを表示
+   - アイコンコンポーネントは `/src/assets/icons/` に用意済み
 
 **完成目標**:
-```
-2025/01/06(月)
-12:34:56  ← リアルタイムで更新される
-```
+- 画面下部に「© 2025 勤怠管理システム」のFooterが表示される
+- サイドナビのメニュー項目に適切なアイコンが表示される
 
 **ヒント**: 
-- `setInterval` を使って1秒ごとに更新
-- `new Date()` で現在時刻を取得
-- 時・分・秒は2桁表示（例：09:05:03）
+- 今日学んだ「コンポーネントのインポートと使用」を活用
+- Footerの配置: `src/components/footer.component.vue`
+- アイコンの使用例: `<TimeIcon class="w-5 h-5" />`
 
 ⏰ 実装時間: 10分
 
@@ -536,56 +537,116 @@ const userName = ref('田中太郎')
 
 ## 💡 解説（中級問題）
 
-**実装の全体像**:
+**課題1: App.vueへのFooter配置**
 
-```vue
+```jsx
+<!-- App.vue -->
 <template>
-  <div class="text-center">
-    <div>{{ currentDate }}</div>
-    <div class="text-[50px]">{{ currentTime }}</div>
+  <div class="w-full min-h-screen flex flex-col">
+    <!-- ヘッダー部分 -->
+    <header class="border-b py-4">
+      <div class="text-2xl text-center">勤怠管理システム</div>
+    </header>
+    
+    <!-- メインコンテンツ -->
+    <div class="flex flex-1">
+      <SideNav />
+      <main class="flex-1 p-8">
+        <RouterView />
+      </main>
+    </div>
+    
+    <!-- Footer を追加 -->
+    <Footer />
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
-
-const currentDate = ref('')
-const currentTime = ref('')
-
-const updateTime = () => {
-  const now = new Date()
-  
-  // 日付の作成
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const date = String(now.getDate()).padStart(2, '0')
-  const dayNames = ['日', '月', '火', '水', '木', '金', '土']
-  const day = dayNames[now.getDay()]
-  currentDate.value = `${year}/${month}/${date}(${day})`
-  
-  // 時刻の作成
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-  const seconds = String(now.getSeconds()).padStart(2, '0')
-  currentTime.value = `${hours}:${minutes}:${seconds}`
-}
-
-onMounted(() => {
-  updateTime()
-  setInterval(updateTime, 1000)
-})
+<script setup lang="ts">
+import { RouterView } from 'vue-router'
+import SideNav from '/src/components/sideNav.component.vue'
+// Footerコンポーネントをインポート
+import Footer from '/src/components/footer.component.vue'
 </script>
 ```
 
 ---
 
-## 解説のポイント
+## 課題2: SideNavのアイコン実装
 
-**重要な概念**:
-- `ref()` でリアクティブなデータを作成
-- `onMounted()` でコンポーネント開始時の処理を定義
-- `setInterval()` で定期的な更新を実現
-- `padStart()` で2桁のゼロ埋めを実装
+```jsx
+<!-- sideNav.component.vue の一部 -->
+<script setup lang="ts">
+import { RouterLink } from 'vue-router'
+// アイコンコンポーネントをインポート
+import TimeIcon from '/src/assets/icons/time.icon.vue'
+import ListIcon from '/src/assets/icons/list.icon.vue'
+
+const menuItems = [
+  { path: '/punch-clock', label: '打刻', icon: TimeIcon },
+  { path: '/overtime', label: '残業申請', icon: ListIcon }
+]
+</script>
+
+<template>
+  <nav class="w-64 bg-gray-100 p-4">
+    <RouterLink 
+      v-for="item in menuItems" 
+      :key="item.path"
+      :to="item.path"
+      class="flex items-center gap-3 p-3 rounded hover:bg-gray-200"
+    >
+      <!-- アイコンを動的に表示 -->
+      <component :is="item.icon" class="w-5 h-5" />
+      <span>{{ item.label }}</span>
+    </RouterLink>
+  </nav>
+</template>
+```
+
+---
+
+## 実装のポイント解説
+
+### 🎯 課題1のポイント
+
+**コンポーネントの使い方の基本**:
+1. **import文でコンポーネントを読み込む**
+   ```javascript
+   import Footer from '/src/components/footer.component.vue'
+   ```
+2. **templateで使用する**
+   ```html
+   <Footer />
+   ```
+
+**レイアウトの工夫**:
+- `flex flex-col` で縦方向に要素を配置
+- `flex-1` でメインコンテンツが残りの領域を埋める
+- これによりFooterが常に画面下部に表示される
+
+---
+
+## 🎯 課題2のポイント
+
+**動的コンポーネント `<component :is="">`**:
+- 変数に応じて表示するコンポーネントを切り替える
+- `item.icon` にはアイコンコンポーネント自体が入っている
+
+**配列を使った効率的な実装**:
+```javascript
+const menuItems = [
+  { path: '/punch-clock', label: '打刻', icon: TimeIcon },
+  { path: '/overtime', label: '残業申請', icon: ListIcon }
+]
+```
+- 同じような項目を配列で管理
+- `v-for` で繰り返し表示
+- 新しいメニューを追加するときも配列に追加するだけ
+
+**学習効果**:
+- ✅ コンポーネントのインポートと使用方法を習得
+- ✅ レイアウトの基本（Flexbox）を理解
+- ✅ 動的コンポーネントという高度な機能を体験
 
 ---
 
@@ -617,8 +678,15 @@ onMounted(() => {
 
 時間がある方は以下に挑戦してみてください：
 
-1. `select.component.vue`にアイコン表示機能を追加
-2. `loading.component.vue`のアニメーションをカスタマイズ
-3. サイドナビゲーションにホバーエフェクトを追加
+1. **SideNavに新しいメニュー項目を追加**
+   - 「設定」メニューを追加（path: '/settings', icon: SettingIcon）
+   
+2. **FooterにTailwindクラスで装飾を追加**
+   - 背景色を変更して見やすくする
+   - アイコンや追加情報を表示
 
-**ヒント**: 既存のコンポーネントコードを参考にしながら、小さな改善から始めてみましょう！
+3. **選択中のメニューをハイライト表示**
+   - 現在のページに対応するメニュー項目の背景色を変える
+   - ヒント: `useRoute()` で現在のパスを取得
+
+**ヒント**: 既存のコンポーネントコードを参考にしながら、今日学んだことを活用してみましょう！
