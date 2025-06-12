@@ -14,6 +14,7 @@ dist-ssr
 
 # Environment variables
 .env
+!.env.example
 
 # Generated slide exports
 hands_on_docs/exports/
