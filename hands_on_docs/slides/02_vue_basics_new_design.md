@@ -254,9 +254,7 @@ wg-attendance-system/
 </div>
 </div>
 
-<div class="card">
-<strong>📍 今回のハンズオン</strong>: 主に components/ と pages/ の.vueファイルを触りながら、画面の作り方を学びます！
-</div>
+## <strong>📍 今回のハンズオン</strong>: 主に components/ と pages/ の.vueファイルを触りながら、画面の作り方を学びます！
 
 ---
 
