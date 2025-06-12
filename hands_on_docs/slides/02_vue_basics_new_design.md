@@ -6,7 +6,7 @@ backgroundColor: #ffffff
 color: #2c3e50
 style: |
   :root {
-    --color-primary: #3498db;
+    --color-primary: #42b883;
     --color-accent: #e74c3c;
     --color-success: #27ae60;
     --color-warning: #f39c12;
@@ -69,12 +69,25 @@ style: |
   }
   
   .small-card {
-    background: var(--color-light);
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-left: 3px solid var(--color-primary);
     border-radius: 6px;
-    padding: 12px;
-    margin: 8px 0;
+    padding: 12px 14px 12px 30px;
+    margin: 10px 0;
     font-size: 14px;
-    line-height: 1.3;
+    line-height: 1.4;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    position: relative;
+  }
+  
+  .small-card::before {
+    content: "✅";
+    position: absolute;
+    left: 8px;
+    top: 12px;
+    font-size: 14px;
+    opacity: 0.7;
   }
   
   .highlight {
@@ -154,27 +167,35 @@ Vue.jsの基本構成とコンポーネントベースの開発を学び、実�
 
 ---
 
-# 📚 本日の資源
+<style scoped>
+.text-lg pre {
+  font-size: 0.6em ;
+}
 
-<div class="flex-container">
-<div class="flex-item">
+</style>
 
-## リポジトリ
-- **メイン**: [wg-attendance-system](https://github.com/toshiki-hirata/wg-attendance-system)
-- **StackBlitz**: [Fork してスタート](https://stackblitz.com/fork/github/toshiki-hirata/wg-attendance-system)
+# 自己紹介
+
+<div class="text-lg">
+
+```json
+{
+  "name": "",
+  "joined": "",
+  "projects_and_skills": [
+    {
+    }
+  ],
+  "hobbies": []
+}
+
+```
 
 </div>
-<div class="flex-item">
 
-## 参考資料
-- [テンプレート構文](https://ja.vuejs.org/guide/essentials/template-syntax.html)
-- [単一ファイルコンポーネント](https://ja.vuejs.org/guide/scaling-up/sfc.html)
 
-</div>
-</div>
-
-<div class="card">
-<strong>今日のゴール</strong><br>
+--- 
+# 今日のゴール
 ✅ Vueアプリケーションの基本構造を理解する<br>
 ✅ SFC（単一ファイルコンポーネント）の構成を理解する<br>
 ✅ テンプレート構文とディレクティブを使える<br>
@@ -250,9 +271,7 @@ wg-attendance-system/
 
 # .vueファイルとは？
 
-<div class="card">
-Vueでは、<strong>1つのファイルに画面の見た目と動作をまとめて書く</strong>ことができます
-</div>
+## Vueでは、<strong>1つのファイルに画面の見た目と動作をまとめて書く</strong>ことができます
 
 ```jsx
 <template>
@@ -331,9 +350,7 @@ h1 { font-size: 24px; }
 
 # templateの役割
 
-<div class="card">
-&lt;template&gt; セクションでは、<strong>HTMLを使って画面の構造</strong>を定義します
-</div>
+## &lt;template&gt; セクションでは、<strong>HTMLを使って画面の構造</strong>を定義します
 
 ```jsx
 <template>
@@ -384,14 +401,12 @@ h1 { font-size: 24px; }
 
 # {{ }} を使ってデータを表示
 
-<div class="card">
-Vueでは {{ }} （二重波括弧）を使って、JavaScriptのデータをHTMLに表示できます
-</div>
+## Vueでは {{ }} （二重波括弧）を使って、JavaScriptのデータをHTMLに表示できます
 
 <div class="flex-container">
 <div class="flex-item">
 
-```jsx
+```html
 <template>
   <!-- 文字を表示 -->
   <p>メッセージ: {{ message }}</p>
@@ -404,9 +419,6 @@ Vueでは {{ }} （二重波括弧）を使って、JavaScriptのデータをHTM
 </template>
 ```
 
-</div>
-<div class="flex-item">
-
 ```jsx
 <script setup>
 import { ref } from 'vue'
@@ -416,6 +428,10 @@ const count = ref(10)
 const isActive = ref(true)
 </script>
 ```
+</div>
+<div class="flex-item">
+
+
 
 <div class="small-card">
 <strong>ポイント</strong>: {{ }} の中には JavaScript の式を書くことができます
@@ -453,9 +469,6 @@ const isActive = ref(true)
 </ul>
 ```
 
-</div>
-<div class="flex-item">
-
 ### データ定義
 ```jsx
 <script setup>
@@ -466,6 +479,10 @@ const items = ref([
 ])
 </script>
 ```
+
+</div>
+<div class="flex-item">
+
 
 <div class="small-card">
 <strong>使い分け</strong>:<br>
@@ -497,9 +514,6 @@ const items = ref([
 <p>回数: {{ clickCount }}</p>
 ```
 
-</div>
-<div class="flex-item">
-
 ### データと処理
 ```jsx
 <script setup>
@@ -511,6 +525,9 @@ const handleClick = () => {
 }
 </script>
 ```
+
+</div>
+<div class="flex-item">
 
 <div class="small-card">
 <strong>よく使うディレクティブ</strong>:<br>
@@ -533,9 +550,7 @@ const handleClick = () => {
 
 # scriptの役割
 
-<div class="card">
-&lt;script setup&gt; セクションでは、<strong>画面の動作やデータの管理</strong>を行います
-</div>
+## &lt;script setup&gt; セクションでは、<strong>画面の動作やデータの管理</strong>を行います
 
 ```jsx
 <script setup>
@@ -575,9 +590,6 @@ const increment = () => {
 </template>
 ```
 
-</div>
-<div class="flex-item">
-
 ### script部分
 ```jsx
 <script setup>
@@ -592,7 +604,14 @@ const increment = () => {
 </script>
 ```
 
-<div class="card">
+
+</div>
+
+<div class="flex-item">
+
+
+
+<div class="small-card">
 <strong>ポイント</strong>: scriptで定義 → templateで使用
 </div>
 
@@ -609,9 +628,7 @@ const increment = () => {
 
 # styleの役割
 
-<div class="card">
-&lt;style&gt; セクションでは、<strong>CSSを使って見た目を装飾</strong>します
-</div>
+## &lt;style&gt; セクションでは、<strong>CSSを使って見た目を装飾</strong>します
 
 <div class="flex-container">
 <div class="flex-item">
@@ -626,9 +643,6 @@ const increment = () => {
   </div>
 </template>
 ```
-
-</div>
-<div class="flex-item">
 
 ```jsx
 <style scoped>
@@ -646,20 +660,21 @@ h1 {
 </style>
 ```
 
-</div>
+
 </div>
 
+<div class="flex-item">
 <div class="small-card">
 <strong>scopedの意味</strong>: このファイルだけに適用されるスタイル
 </div>
+</div>
+
 
 ---
 
 # もう一つの方法: Tailwind CSS
 
-<div class="card">
-このプロジェクトでは <strong>Tailwind CSS</strong> を使って、もっと簡単にスタイリングができます！
-</div>
+## このプロジェクトでは <strong>Tailwind CSS</strong> を使って、もっと簡単にスタイリングができます！
 
 ```jsx
 <template>
@@ -683,46 +698,20 @@ h1 {
 
 ---
 
-# Tailwind CSSの基本
+# これが、こうかけちゃいます
 
 <div class="flex-container">
 <div class="flex-item">
 
-### 基本的なレイアウト
-```jsx
-<template>
-  <!-- コンテナ -->
-  <div class="container mx-auto px-4">
-    <!-- フレックスボックス -->
-    <div class="flex justify-between items-center">
-      <h1 class="text-2xl font-bold">タイトル</h1>
-      <button class="px-4 py-2 bg-blue-500 text-white rounded">
-        ボタン
-      </button>
-    </div>
-  </div>
-</template>
-```
+<!-- ここにstyle記載の場合の記述例 -->
+
+<!-- ここにtailwind記載の場合の記述例 -->
+
 
 </div>
 <div class="flex-item">
 
-### グリッドレイアウト
-```jsx
-<template>
-  <div class="grid grid-cols-3 gap-4 mt-8">
-    <div class="bg-white p-4 shadow rounded">
-      カード1
-    </div>
-    <div class="bg-white p-4 shadow rounded">
-      カード2
-    </div>
-    <div class="bg-white p-4 shadow rounded">
-      カード3
-    </div>
-  </div>
-</template>
-```
+<!-- ブランクのままでOKです。後で画像を貼ります -->
 
 </div>
 </div>
@@ -772,30 +761,29 @@ h1 {
 
 ---
 
+<style scoped>
+  .text-lg {
+    font-size: 0.8em;
+  }
+</style>
+
 # 🔍 問題（初級）
 
-<div class="card">
-<strong>Q: scriptで定義した変数 userName の値を画面に表示するには、どのコードが適切？</strong>
-</div>
+## Q: scriptで定義した変数 userName の値を画面に表示するには、どのコードが適切？
 
-<div class="compact">
+<div class="text-lg">
 A. &lt;p&gt;userName&lt;/p&gt;<br>
 B. &lt;p&gt;{{ userName }}&lt;/p&gt;<br>
 C. &lt;p&gt;:userName&lt;/p&gt;<br>
 D. &lt;p v-text="userName"&gt;&lt;/p&gt;
 </div>
 
-<div class="center">
-⏰ 考え時間: 30秒
-</div>
 
 ---
 
 # 💡 解説（初級問題）
 
-<div class="card">
-<strong>正解: B.</strong> &lt;p&gt;{{ userName }}&lt;/p&gt;
-</div>
+## 正解: B. &lt;p&gt;{{ userName }}&lt;/p&gt;
 
 <div class="flex-container">
 <div class="flex-item">
@@ -830,11 +818,30 @@ const userName = ref('田中太郎')
 
 ---
 
+# 📚 本日の資源
+
+<div class="flex-container">
+<div class="flex-item">
+
+## リポジトリ
+- **メイン**: [wg-attendance-system](https://github.com/toshiki-hirata/wg-attendance-system)
+- **StackBlitz**: [Fork してスタート](https://stackblitz.com/fork/github/toshiki-hirata/wg-attendance-system)
+
+</div>
+<div class="flex-item">
+
+## 参考資料
+- [テンプレート構文](https://ja.vuejs.org/guide/essentials/template-syntax.html)
+- [単一ファイルコンポーネント](https://ja.vuejs.org/guide/scaling-up/sfc.html)
+
+</div>
+</div>
+
+---
+
 # 🔨 問題（中級）- ハンズオン
 
-<div class="card">
-<strong>お題</strong>: アプリの基本レイアウトを完成させてください
-</div>
+## お題: アプリの基本レイアウトを完成させてください
 
 <div class="flex-container">
 <div class="flex-item">
@@ -877,9 +884,7 @@ const userName = ref('田中太郎')
 
 # 💡 解説（中級問題）- 課題1
 
-<div class="card">
-<strong>課題1: App.vueへのFooter配置</strong>
-</div>
+## 課題1: App.vueへのFooter配置
 
 ```jsx
 <!-- App.vue -->
@@ -915,9 +920,7 @@ import Footer from '/src/components/footer.component.vue'
 
 # 💡 解説（中級問題）- 課題2
 
-<div class="card">
-<strong>課題2: SideNavのアイコン実装</strong>
-</div>
+## 課題2: SideNavのアイコン実装
 
 ```jsx
 <!-- sideNav.component.vue -->
@@ -1047,9 +1050,7 @@ const menuItems = [
 
 # 🎯 追加課題
 
-<div class="card">
-時間がある方は以下に挑戦してみてください
-</div>
+## 時間がある方は以下に挑戦してみてください
 
 <div class="flex-container">
 <div class="flex-item">
