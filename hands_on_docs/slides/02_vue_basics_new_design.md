@@ -671,12 +671,49 @@ h1 {
 
 ## このプロジェクトでは <strong>Tailwind CSS</strong> を使って、もっと簡単にスタイリングができます！
 
+<div class="flex-container">
+<div class="flex-item">
+
+### 従来のCSS記述
 ```jsx
 <template>
-  <!-- styleセクションを書かなくても、クラス名だけで装飾できる！ -->
-  <div class="p-5 bg-gray-100">
-    <h1 class="text-2xl text-gray-800">タイトル</h1>
-    <button class="bg-blue-500 text-white px-5 py-2 rounded">
+  <div>
+    <h1 class="title">タイトル</h1>
+    <button class="primary-button">
+      クリック
+    </button>
+  </div>
+</template>
+
+<style scoped>
+.title {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.primary-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+</style>
+```
+
+</div>
+<div class="flex-item">
+
+### Tailwind CSS記述
+```jsx
+<template>
+  <div>
+    <h1 class="text-2xl text-gray-800 mb-4">
+      タイトル
+    </h1>
+    <button class="bg-blue-500 text-white px-6 py-3 rounded-lg cursor-pointer">
       クリック
     </button>
   </div>
@@ -686,27 +723,11 @@ h1 {
 ```
 
 <div class="small-card">
-<strong>メリット</strong>:<br>
-• CSSを書かなくても見た目を整えられる<br>
-• クラス名を見れば、どんな装飾か分かる
+<strong>Tailwind CSSの利点</strong>:<br>
+• CSSを書かずにクラス名だけで装飾<br>
+• レスポンシブ対応が簡単<br>
+• デザインの一貫性が保ちやすい
 </div>
-
----
-
-# これが、こうかけちゃいます
-
-<div class="flex-container">
-<div class="flex-item">
-
-<!-- ここにstyle記載の場合の記述例 -->
-
-<!-- ここにtailwind記載の場合の記述例 -->
-
-
-</div>
-<div class="flex-item">
-
-<!-- ブランクのままでOKです。後で画像を貼ります -->
 
 </div>
 </div>
