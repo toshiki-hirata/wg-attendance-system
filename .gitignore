@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Environment variables
+.env
+
+# Generated slide exports
+hands_on_docs/exports/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

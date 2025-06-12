@@ -10,18 +10,19 @@
     "preview": "vite preview",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "marp:pptx": "for file in hands_on_docs/slides/*.md; do npx marp \"$file\" --pptx -o \"hands_on_docs/exports/$(basename \"$file\" .md).pptx\"; done",
-    "marp:pdf": "for file in hands_on_docs/slides/*.md; do npx marp \"$file\" --pdf -o \"hands_on_docs/exports/$(basename \"$file\" .md).pdf\"; done",
-    "marp:html": "for file in hands_on_docs/slides/*.md; do npx marp \"$file\" --html -o \"hands_on_docs/exports/$(basename \"$file\" .md).html\"; done"
+    "slides:build": "node scripts/build-slides.js",
+    "marp:pptx": "npm run slides:build && for file in hands_on_docs/exports/*.md; do npx marp \"$file\" --pptx -o \"hands_on_docs/exports/$(basename \"$file\" .md).pptx\"; done",
+    "marp:pdf": "npm run slides:build && for file in hands_on_docs/exports/*.md; do npx marp \"$file\" --pdf -o \"hands_on_docs/exports/$(basename \"$file\" .md).pdf\"; done",
+    "marp:html": "npm run slides:build && for file in hands_on_docs/exports/*.md; do npx marp \"$file\" --html -o \"hands_on_docs/exports/$(basename \"$file\" .md).html\"; done"
   },
   "dependencies": {
+    "@vee-validate/rules": "4.13.2",
     "axios": "1.8.4",
     "pinia": "3.0.1",
     "pinia-plugin-persistedstate": "4.2.0",
-    "vue": "3.5.13",
-    "vue-router": "4.5.0",
     "vee-validate": "4.13.2",
-    "@vee-validate/rules": "4.13.2"
+    "vue": "3.5.13",
+    "vue-router": "4.5.0"
   },
   "devDependencies": {
     "@eslint/js": "9.24.0",
@@ -30,6 +31,7 @@
     "@vue/tsconfig": "0.7.0",
     "autoprefixer": "10.4.21",
     "concurrently": "9.1.2",
+    "dotenv": "16.5.0",
     "eslint": "9.24.0",
     "eslint-config-prettier": "10.1.2",
     "eslint-plugin-prettier": "5.2.6",

@@ -180,13 +180,10 @@ Vue.jsの基本構成とコンポーネントベースの開発を学び、実�
 
 ```json
 {
-  "name": "",
-  "joined": "",
-  "projects_and_skills": [
-    {
-    }
-  ],
-  "hobbies": []
+  "name": "{{ env.PRESENTER_NAME }}",
+  "joined": "{{ env.PRESENTER_JOINED }}",
+  "projects_and_skills": {{ env.PRESENTER_PROJECTS_AND_SKILLS }},
+  "hobbies": {{ env.PRESENTER_HOBBIES }}
 }
 
 ```
