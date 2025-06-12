@@ -841,41 +841,46 @@ const userName = ref('田中太郎')
 
 # 🔨 問題（中級）- ハンズオン
 
-## お題: アプリの基本レイアウトを完成させてください
+## お題: SideNavコンポーネントの基本レイアウトを作成してください
 
 <div class="flex-container">
 <div class="flex-item">
 
 ### 現在の状況
 - App.vueにFooterが配置されていない
-- SideNavのアイコンが表示されない
+- SideNavコンポーネントが未完成（空の状態）
 
 ### 要件
 1. **課題1**: App.vueにFooterを配置
    - Footerコンポーネントをimport
    - 画面下部に固定表示
    
-2. **課題2**: SideNavのアイコン実装
-   - 各メニュー項目にアイコン表示
-   - アイコンは `/src/assets/icons/` に用意済み
+2. **課題2**: SideNavの基本レイアウト作成
+   - HTML要素を配置（nav要素、メニュー項目）
+   - Tailwind CSSでスタイル適用（bg-purple-500など）
+   - {{ userName }} を使って名前を表示
 
 </div>
 <div class="flex-item">
 
 ### 完成イメージ
 ```
-┌─────────────────────┐
-│      Header         │
-├────┬────────────────┤
-│    │                │
-│Nav │    Content     │
-│    │                │
-├────┴────────────────┤
-│      Footer         │
-└─────────────────────┘
+┌──────────────┐
+│勤怠管理アプリ  │
+│              │
+│ ⏰ 打刻      │
+│ 📋 残業確認   │
+│              │
+│              │
+│              │
+│ 👤 田中 二郎  │
+└──────────────┘
 ```
 
-⏰ 実装時間: 10分
+**課題2のGoal**: templateに書いて目的のレイアウトに近づける
+- html要素を書いてみる
+- tailwind cssでスタイルを当ててみる  
+- {{ userName }} を使って名前を表示
 
 </div>
 </div>
@@ -920,34 +925,40 @@ import Footer from '/src/components/footer.component.vue'
 
 # 💡 解説（中級問題）- 課題2
 
-## 課題2: SideNavのアイコン実装
+## 課題2: SideNavの基本レイアウト作成
 
 ```jsx
 <!-- sideNav.component.vue -->
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
-// アイコンコンポーネントをインポート
-import TimeIcon from '/src/assets/icons/time.icon.vue'
-import ListIcon from '/src/assets/icons/list.icon.vue'
+import { ref } from 'vue'
 
-const menuItems = [
-  { path: '/punch-clock', label: '打刻', icon: TimeIcon },
-  { path: '/overtime', label: '残業申請', icon: ListIcon }
-]
+// ユーザー名をリアクティブデータとして定義
+const userName = ref('田中 二郎')
 </script>
 
 <template>
-  <nav class="w-64 bg-gray-100 p-4">
-    <RouterLink 
-      v-for="item in menuItems" 
-      :key="item.path"
-      :to="item.path"
-      class="flex items-center gap-3 p-3 rounded hover:bg-gray-200"
-    >
-      <!-- アイコンを動的に表示 -->
-      <component :is="item.icon" class="w-5 h-5" />
-      <span>{{ item.label }}</span>
-    </RouterLink>
+  <!-- navタグでサイドナビゲーションを作成 -->
+  <nav class="fixed flex flex-col justify-between bg-purple-500 h-full rounded-r-[20px] shadow-2xl p-4 text-gray-100">
+    <!-- 上部セクション：タイトルとメニュー -->
+    <div class="flex flex-col gap-10">
+      <!-- アプリタイトル -->
+      <div class="font-bold">勤怠管理アプリ</div>
+      
+      <!-- メニュー項目 -->
+      <div class="flex flex-col gap-4">
+        <button class="flex items-center w-full px-2 gap-2">
+          ⏰ <span>打刻</span>
+        </button>
+        <button class="flex items-center w-full px-2 gap-2">
+          📋 <span>残業確認</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- 下部セクション：ユーザー名表示 -->
+    <div class="flex items-center w-full gap-2">
+      👤 {{ userName }}
+    </div>
   </nav>
 </template>
 ```
@@ -980,16 +991,24 @@ const menuItems = [
 ### 🎯 課題2のポイント
 
 <div class="small-card">
-<strong>動的コンポーネント</strong>:<br>
-• <strong>&lt;component :is=""&gt;</strong><br>
-• 変数でコンポーネントを切り替え
+<strong>HTML要素の配置</strong>:<br>
+• <strong>&lt;nav&gt;</strong> タグでナビゲーション作成<br>
+• <strong>&lt;div&gt;</strong> で構造を整理<br>
+• <strong>&lt;button&gt;</strong> でメニュー項目
 </div>
 
 <div class="small-card">
-<strong>配列での効率化</strong>:<br>
-• メニュー項目を配列で管理<br>
-• <strong>v-for</strong> で繰り返し表示<br>
-• 拡張が容易
+<strong>Tailwind CSSの活用</strong>:<br>
+• <strong>bg-purple-500</strong>: 紫色の背景<br>
+• <strong>flex flex-col</strong>: 縦方向レイアウト<br>
+• <strong>gap-4</strong>: 要素間の余白
+</div>
+
+<div class="small-card">
+<strong>{{ }} でデータ表示</strong>:<br>
+• scriptで定義した userName<br>
+• templateで {{ userName }} で表示<br>
+• リアクティブに更新される
 </div>
 
 </div>
@@ -998,8 +1017,9 @@ const menuItems = [
 <div class="card">
 <strong>学習効果</strong>:<br>
 ✅ コンポーネントのインポートと使用方法を習得<br>
-✅ レイアウトの基本（Flexbox）を理解<br>
-✅ 動的コンポーネントという高度な機能を体験
+✅ HTML要素を使った基本的な構造作成を理解<br>
+✅ Tailwind CSSでのスタイリング手法を習得<br>
+✅ Vue.jsの {{ }} 記法でデータ表示を体験
 </div>
 
 ---
