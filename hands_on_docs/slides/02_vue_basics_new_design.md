@@ -910,7 +910,7 @@ const userName = ref('田中太郎')
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import SideNav from '/src/components/sideNav.component.vue'
+import SideNav from '/src/comionents/sideNav.component.vue'
 // Footerコンポーネントをインポート
 import Footer from '/src/components/footer.component.vue'
 </script>
