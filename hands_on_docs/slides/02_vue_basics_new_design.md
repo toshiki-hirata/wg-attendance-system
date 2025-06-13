@@ -168,15 +168,16 @@ Vue.jsの基本構成とコンポーネントベースの開発を学び、実�
 ---
 
 <style scoped>
-.text-lg pre {
+.introduction pre {
   font-size: 0.6em ;
+  margin: 3em 16em;
 }
 
 </style>
 
 # 自己紹介
 
-<div class="text-lg">
+<div class="introduction">
 
 ```json
 {
