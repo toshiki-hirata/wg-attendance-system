@@ -20,22 +20,15 @@
 
       <div>
         <label class="block text-sm font-medium text-gray-700">日付</label>
-        <Field v-model="dateSelected" name="applicationDate" rules="required">
+        <Field v-model="dateSelected" name="applicationDate">
           <SelectComponent v-model="dateSelected" :options="dateOptions" />
         </Field>
-        <ErrorMessage
-          name="applicationDate"
-          class="text-red-500 text-xs mt-1"
-        />
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-700">申請先</label>
-        <Field v-slot="{ field, errors }" name="reviewer" rules="required">
+        <Field v-slot="{ field }" name="reviewer">
           <InputComponent v-bind="field" />
-          <p v-if="errors.length" class="text-red-500 text-xs mt-1">
-            {{ errors[0] }}
-          </p>
         </Field>
       </div>
 
@@ -43,25 +36,15 @@
         <label class="block text-sm font-medium text-gray-700"
           >時間 (例: 1.0)</label
         >
-        <Field
-          v-slot="{ field, errors }"
-          name="overTime"
-          rules="required|decimal"
-        >
+        <Field v-slot="{ field }" name="overTime">
           <InputComponent v-bind="field" placeholder="1.0" :hour="true" />
-          <p v-if="errors.length" class="text-red-500 text-xs mt-1">
-            {{ errors[0] }}
-          </p>
         </Field>
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-700">理由</label>
-        <Field v-slot="{ field, errors }" name="reason" rules="required">
+        <Field v-slot="{ field }" name="reason">
           <InputComponent v-bind="field" :high="true" :is-text-field="true" />
-          <p v-if="errors.length" class="text-red-500 text-xs mt-1">
-            {{ errors[0] }}
-          </p>
         </Field>
       </div>
       <div class="flex justify-between gap-4 pt-4">
@@ -86,8 +69,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue';
-import { Form, Field, ErrorMessage, defineRule, useForm } from 'vee-validate';
-import { required as originalRequired } from '@vee-validate/rules';
+import { Form, Field } from 'vee-validate';
 import SelectComponent from '../components/select.component.vue';
 import InputComponent from '../components/input.component.vue';
 import type { OverTime } from '../repositories/overTime.repository';
@@ -97,19 +79,6 @@ const isShow = defineModel<boolean>({ required: true });
 const emit = defineEmits(['onClickSubmit']);
 const overtimeInfo = useOverTimeStore();
 
-defineRule('required', (value: string) => {
-  if (originalRequired(value)) {
-    return true;
-  }
-  return 'この項目は必須です。';
-});
-defineRule('decimal', (value: string) => {
-  const regex = /^[1-9]\d*\.\d{1}$/;
-  if (regex.test(value)) {
-    return true;
-  }
-  return '小数点形式 (例: 1.0) で入力してください。';
-});
 // 申請日ドロップダウンで選択した日付
 const dateSelected = ref('');
 // 申請日ドロップダウンに表示するリスト
@@ -128,28 +97,20 @@ const closeDialog = () => {
   isShow.value = false;
 };
 
-// useForm 関数の戻り値の型から FormReset 型を取得
-type FormReturnType = ReturnType<typeof useForm>;
-type FormReset = FormReturnType['resetForm'];
-
 /**
  * 申請ボタン押下時の処理を実行する。
  * フォームの値を送信し、ダイアログを閉じ、フォームをリセットする。
  * @param {any} values - フォームの入力値。
  * @param {{ resetForm: FormReset }} context - VeeValidateのコンテキスト（フォームリセット関数を含む）。
  */
-const onSubmit = async (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  values: any,
-  { resetForm }: { resetForm: FormReset }
-) => {
-  const typedValues = values as OverTime;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const onSubmit = async (values: OverTime, { resetForm }: any) => {
   // 入力値を構造化
   const submissionData = {
-    applicationDate: typedValues.applicationDate,
-    reviewer: typedValues.reviewer,
-    overTime: typedValues.overTime + 'h',
-    reason: typedValues.reason,
+    applicationDate: values.applicationDate,
+    reviewer: values.reviewer,
+    overTime: values.overTime + 'h',
+    reason: values.reason,
   } as OverTime;
   await overtimeInfo.postOverTimeInfo(submissionData);
   emit('onClickSubmit', submissionData);
