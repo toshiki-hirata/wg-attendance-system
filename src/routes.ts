@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import PunchClockPage from '../src/pages/punchClockPage.vue';
-import { SIDENAV_ITEM } from '../src/stores/sidenav.store';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -13,17 +12,3 @@ export const router = createRouter({
     { path: '/punchClock', component: PunchClockPage },
   ],
 });
-
-/**
- * 列挙型 `SIDENAV_ITEM` から対応するパス文字列に変換します。
- * @param {SIDENAV_ITEM} item - 変換するサイドナビゲーションアイテム。
- * @returns {string} 変換されたパス文字列。
- */
-export const getItemPath = (item: SIDENAV_ITEM): string => {
-  switch (item) {
-    case SIDENAV_ITEM.PUNCH_CLOCK:
-      return '/punchClock';
-    default:
-      return '/';
-  }
-};

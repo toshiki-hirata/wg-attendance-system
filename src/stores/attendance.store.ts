@@ -1,13 +1,7 @@
 import { defineStore } from 'pinia';
 import { BUTTON_CONDITION } from '../components/primaryButton.component.vue';
-import {
-  punchClockRepository,
-  type Attendance,
-} from '../repositories/punchClock.repository';
 
 export interface AttendanceState {
-  // 打刻時刻のリスト
-  attendanceHistory: Attendance[];
   // 勤務開始ボタンの状態
   startButton: BUTTON_CONDITION;
   // 休憩開始ボタンの状態
@@ -18,7 +12,6 @@ export interface AttendanceState {
 
 export const useAttendanceStore = defineStore('attendance.attendance', {
   state: (): AttendanceState => ({
-    attendanceHistory: [],
     startButton: BUTTON_CONDITION.ENABLED,
     breakButton: BUTTON_CONDITION.DISABLED,
     endButton: BUTTON_CONDITION.DISABLED,
@@ -31,23 +24,6 @@ export const useAttendanceStore = defineStore('attendance.attendance', {
      */
     async fetchAttendanceHistory() {
       // TODO: Implement it
-    },
-    /**
-     * 指定された打刻時間をストアの`attendanceHistory`に追加します。
-     * @param {Attendance} attendance - 追加する打刻時間データ。
-     */
-    addAttendanceHistory(attendance: Attendance) {
-      this.attendanceHistory.push(attendance);
-    },
-    /**
-     * 打刻時間をAPIで登録します。
-     * @param {Attendance} attendance - 登録する打刻時間データ。
-     * @returns {Promise<any>} APIからのレスポンス。
-     */
-    async postAttendance(attendance: Attendance) {
-      const response =
-        await punchClockRepository.submitAttendanceHistory(attendance);
-      return response;
     },
     /**
      * ストアの各ボタンの状態を「勤務開始後」の状態に更新します。
