@@ -27,10 +27,10 @@ export const useAttendanceStore = defineStore('attendance.attendance', {
   getters: {},
   actions: {
     /**
-     * 打刻時間をAPIから取得し、ストアの`attendanceHistory`に格納します。
+     * 打刻時間をAPIから取得します。
      */
     async fetchAttendanceHistory() {
-      await punchClockRepository.fetchAttendanceHistory();
+      // TODO: Implement it
     },
     /**
      * 指定された打刻時間をストアの`attendanceHistory`に追加します。

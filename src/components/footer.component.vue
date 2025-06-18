@@ -57,11 +57,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import ArrowIcon from '../assets/icons/arrow.icon.vue';
-import { useAttendanceStore } from '../stores/attendance.store';
 import { formatDate, formatMMDD } from '../utils/dateFormatter';
 import type { Attendance } from '../repositories/punchClock.repository';
-
-const attendanceStore = useAttendanceStore();
 const isShow = ref(false);
 
 const attendanceLabels: Record<keyof Omit<Attendance, 'date'>, string> = {
@@ -76,7 +73,7 @@ const header = ref<{ label: string; field: string; width: string }[]>([
 ]);
 
 onMounted(async () => {
-  await attendanceStore.fetchAttendanceHistory();
+  //TODO: Implement it
 
   // 日付範囲の生成
   const dateRange = generateDateRangeFromToday(-2, 5);
