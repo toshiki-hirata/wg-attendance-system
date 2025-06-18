@@ -6,14 +6,12 @@
         <router-view />
       </div>
     </div>
-    <Footer />
   </div>
   <Loading />
 </template>
 
 <script setup lang="ts">
 import SideNav from '/src/components/sideNav.component.vue';
-import Footer from '/src/components/footer.component.vue';
 import Loading from '/src/components/loading.component.vue';
 </script>
 
