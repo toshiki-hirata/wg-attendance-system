@@ -1,5 +1,5 @@
 import { axiosInstance } from '../api/axios';
-import type { GetSampleResponse } from '../api/types';
+// import type { GetSampleResponse } from '../api/types';
 
 export interface Attendance {
   date: string;
@@ -15,17 +15,9 @@ export const punchClockRepository = {
    * @returns {Promise<GetSampleResponse[]>} 打刻情報の配列、または空の配列を返します。
    * @throws {Error} APIコールに失敗した場合にエラーをスローします。
    */
-  async fetchAttendanceHistory() {
-    try {
-      const response = await axiosInstance.get<GetSampleResponse>(
-        '/attendances/history'
-      );
-      return Array.isArray(response.data) ? response.data : [];
-    } catch (error) {
-      console.error('打刻情報取得APIコールに失敗しました。', error);
-      throw error;
-    }
-  },
+
+  //TODO: Implement it
+
   /**
    * 打刻情報を登録するためのAPIを呼び出します。
    * @param {Attendance} attendance - 登録する打刻データ。
