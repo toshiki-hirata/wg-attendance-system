@@ -24,22 +24,13 @@ export const useAttendanceStore = defineStore('attendance.attendance', {
     endButton: BUTTON_CONDITION.DISABLED,
   }),
   persist: { storage: sessionStorage },
-  getters: {
-    getAttendanceHistory: (state) => state.attendanceHistory,
-  },
+  getters: {},
   actions: {
     /**
      * 打刻時間をAPIから取得し、ストアの`attendanceHistory`に格納します。
      */
     async fetchAttendanceHistory() {
-      const response = await punchClockRepository.fetchAttendanceHistory();
-      this.attendanceHistory = response.map((item) => ({
-        date: item.date,
-        start: item.startTime,
-        break: item.breaks[0]?.start || '',
-        restart: item.breaks[0]?.end || '',
-        end: item.endTime,
-      }));
+      await punchClockRepository.fetchAttendanceHistory();
     },
     /**
      * 指定された打刻時間をストアの`attendanceHistory`に追加します。

@@ -43,9 +43,8 @@
                 {{ attendanceLabels[key] }}
               </template>
               <template v-else>
-                {{
-                  attendanceStore.attendanceHistory[columnIndex - 1][key] || ''
-                }}
+                <!-- TODO: Implement it -->
+                <p>時刻表示処理未実装</p>
               </template>
             </td>
           </tr>
@@ -87,15 +86,6 @@ onMounted(async () => {
     { label: '', field: 'label', width: '150px' },
     ...generateHeaderColumns(dateRange),
   ];
-
-  // 欠損データを補完
-  const updatedAttendances = fillMissingAttendances(
-    dateRange,
-    attendanceStore.attendanceHistory
-  );
-
-  // ストアを更新
-  attendanceStore.attendanceHistory = updatedAttendances;
 });
 
 /**
@@ -147,42 +137,42 @@ function generateHeaderColumns(
   }));
 }
 
-/**
- * 欠損している日付の打刻データを補完した新しい配列を返します。
- * @param {{ date: Date; formattedDate: string; formattedShortDate: string }[]} dateRange - 期待される日付範囲の配列。
- * @param {Attendance[]} existingAttendances - 既存の打刻データの配列。
- * @returns {Attendance[]} 欠損データが補完された打刻データの新しい配列。
- */
-function fillMissingAttendances(
-  dateRange: {
-    date: Date;
-    formattedDate: string;
-    formattedShortDate: string;
-  }[],
-  existingAttendances: Attendance[]
-) {
-  // 関数内でマップを生成
-  const attendanceMap = new Map<string, Attendance>();
-  existingAttendances.forEach((attendance) => {
-    attendanceMap.set(attendance.date, attendance);
-  });
+// /**
+//  * 欠損している日付の打刻データを補完した新しい配列を返します。
+//  * @param {{ date: Date; formattedDate: string; formattedShortDate: string }[]} dateRange - 期待される日付範囲の配列。
+//  * @param {Attendance[]} existingAttendances - 既存の打刻データの配列。
+//  * @returns {Attendance[]} 欠損データが補完された打刻データの新しい配列。
+//  */
+// function fillMissingAttendances(
+//   dateRange: {
+//     date: Date;
+//     formattedDate: string;
+//     formattedShortDate: string;
+//   }[],
+//   existingAttendances: Attendance[]
+// ) {
+//   // 関数内でマップを生成
+//   const attendanceMap = new Map<string, Attendance>();
+//   existingAttendances.forEach((attendance) => {
+//     attendanceMap.set(attendance.date, attendance);
+//   });
 
-  // 既存の配列をコピーして変更せず、新しい配列を作成
-  const result = [...existingAttendances];
+//   // 既存の配列をコピーして変更せず、新しい配列を作成
+//   const result = [...existingAttendances];
 
-  for (const { formattedDate } of dateRange) {
-    if (!attendanceMap.get(formattedDate)) {
-      // 新しい要素を作成して追加
-      result.push({
-        date: formattedDate,
-        start: '',
-        break: '',
-        restart: '',
-        end: '',
-      });
-    }
-  }
+//   for (const { formattedDate } of dateRange) {
+//     if (!attendanceMap.get(formattedDate)) {
+//       // 新しい要素を作成して追加
+//       result.push({
+//         date: formattedDate,
+//         start: '',
+//         break: '',
+//         restart: '',
+//         end: '',
+//       });
+//     }
+//   }
 
-  return result;
-}
+//   return result;
+// }
 </script>
